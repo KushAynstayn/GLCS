@@ -1,5 +1,5 @@
 .sidebar-bg {
-    background-color: #D50000;
+    background-color: #a61e22;
     box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
 }
 
@@ -16,7 +16,7 @@
 
 .nav-active {
     background-color: white !important;
-    color: #D50000 !important;
+    color: #a61e22 !important;
     font-weight: bold;
 }
 
