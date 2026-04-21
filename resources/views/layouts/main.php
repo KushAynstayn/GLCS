@@ -8,24 +8,48 @@
     <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;700;900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="assets/css/app.css">
+    <link rel="stylesheet" href="../resources/assets/css/app.css">
+    <link rel="stylesheet" href="../resources/assets/css/sidebar.css">
     <style>
         body { font-family: 'League Spartan', sans-serif; }
         .font-poppins { font-family: 'Poppins', sans-serif; }
     </style>
 </head>
-<body class="flex flex-col min-h-screen relative">
+<body class="flex flex-col h-screen overflow-hidden">
 
+     <!-- HEADER -->
     <?php include __DIR__ . '/../components/header.php'; ?>
 
-    <main class="flex-grow flex flex-col min-h-0">
-        <?php echo $content ?? ''; ?>
-    </main>
+    <?php if ($page === 'landing'): ?>
 
-    <footer class="absolute bottom-0 left-0 p-5 text-xs text-white">
-        &copy; 2026 M Lhuillier Financial Services, Inc.
-    </footer>
+        <!-- LANDING (NO SIDEBAR) -->
+        <main class="flex-1 flex flex-col">
+            <?php echo $content ?? ''; ?>
+        </main>
 
+    <?php else: ?>
+
+        <!-- SYSTEM PAGES (WITH SIDEBAR) -->
+        <div class="flex h-screen overflow-hidden">
+
+            <?php include __DIR__ . '/../components/sidebar.php'; ?>
+
+            <main class="flex-1 p-6 bg-gray-100 overflow-y-auto">
+                <?php echo $content ?? ''; ?>
+            </main>
+
+        </div>
+
+    <?php endif; ?>
+
+    <!-- FOOTER (optional for landing only) -->
+    <?php if ($page == 'landing'): ?>
+        <div class="absolute bottom-0 left-0 w-full z-50 pointer-events-none">
+            <?php include __DIR__ . '/../components/footer.php'; ?>
+        </div>
+    <?php endif; ?>
+
+    
     <script>
     document.addEventListener("DOMContentLoaded", function() {
         const illustration = document.getElementById('illustration');

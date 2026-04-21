@@ -1,0 +1,39 @@
+.sidebar-bg {
+    background-color: #D50000;
+    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.nav-item {
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.nav-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.nav-active {
+    background-color: white !important;
+    color: #D50000 !important;
+    font-weight: bold;
+}
+
+/* For rotating the chevron icon */
+.chevron-icon {
+    transition: transform 0.3s ease;
+}
+
+.rotate-180 {
+    transform: rotate(180deg);
+}
+
+.submenu {
+    display: none;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.submenu.show {
+    display: block;
+}

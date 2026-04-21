@@ -19,3 +19,22 @@
 .b3 { bottom: 10%; left: 5%; } 
 .b4 { top: 10%; right: 20%; } 
 .b5 { bottom: 5%; right: 10%; }
+
+
+/* Ensure the landing container fills the whole screen height */
+.landing-wrapper {
+    height: calc(100vh - 64px); /* Subtract header height */
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Force the footer content to be visible on top of the red background */
+.absolute.bottom-0 footer {
+    background: transparent !important;
+    color: rgba(255, 255, 255, 0.8);
+    padding: 20px 50px;
+    font-size: 12px;
+    pointer-events: auto; /* Re-enable clicks for links */
+}
