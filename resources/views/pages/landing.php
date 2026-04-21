@@ -12,10 +12,43 @@
     .btn-slide:hover::before { left: 0; }
     .btn-slide:hover { color: white; }
     .btn-slide span { position: relative; z-index: 1; }
+
+    /* Underline effect for Get Started */
+    .btn-underline {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: white;
+        font-weight: bold;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    .btn-underline::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: -4px;
+        left: 0;
+        background-color: white;
+        transition: width 0.3s ease-in-out;
+    }
+
+    .btn-underline:hover::after {
+        width: 100%;
+    }
+
+    /* Arrow nudge animation on hover */
+    .btn-underline:hover i {
+        transform: translateX(5px);
+        transition: transform 0.3s ease;
+    }
 </style>
 
 <div class="relative w-full flex-1 bg-cover bg-center bg-no-repeat flex items-center justify-between" 
-     style="background-image: url('assets/images/landing_bg.png');">
+     style="background-image: url('assets/images/landing_bg.png'); min-height: calc(100vh - 64px);">
     
     <div id="content-container" class="z-10 pl-20 transition-all duration-700 ease-in-out">
         
@@ -27,8 +60,9 @@
                 CONSOLIDATED SYSTEM
             </h2>
             
-            <button id="btn-login-trigger" onclick="showLogin()" class="btn-slide mt-10 inline-block bg-white text-red-800 font-bold py-3 px-12 rounded-lg shadow-lg border border-red-800">
-                <span>LOGIN</span>
+            <button id="btn-login-trigger" onclick="showLogin()" class="btn-underline mt-10 text-l tracking-widest uppercase focus:outline-none">
+                <span>GET STARTED</span>
+                <i class="fas fa-arrow-right text-lg transition-transform duration-300"></i>
             </button>
         </div>
 
@@ -56,14 +90,35 @@
         </div>
     </div>
 
-    <div class="absolute top-[4%] right-[3%] p-4 bg-white/20 backdrop-blur-md shadow-2xl rounded-2xl text-red-800 border border-white/30 z-20 animate-smooth-bounce"><i class="fas fa-book-open text-3xl"></i></div>
-    <div class="absolute top-[8%] left-[60%] p-4 bg-white/20 backdrop-blur-md shadow-2xl rounded-2xl text-red-800 border border-white/30 z-20 animate-smooth-bounce"><i class="fas fa-peso-sign text-3xl"></i></div>
-    <div class="absolute top-[50%] left-[55%] p-4 bg-white/20 backdrop-blur-md shadow-2xl rounded-2xl text-red-800 border border-white/30 z-20 animate-smooth-bounce"><i class="fas fa-dollar-sign text-3xl"></i></div>
-    <div class="absolute top-[5%] left-[75%] p-4 bg-white/20 backdrop-blur-md shadow-2xl rounded-2xl text-red-800 border border-white/30 z-20 animate-smooth-bounce"><i class="fas fa-save text-3xl"></i></div>
-    <div class="absolute top-[30%] right-[30%] p-4 bg-white/20 backdrop-blur-md shadow-2xl rounded-2xl text-red-800 border border-white/30 z-20 animate-smooth-bounce"><i class="fas fa-money-bill-wave text-3xl"></i></div>
+    <div class="absolute top-[4%] right-[3%] p-4 bg-[#a61e22] backdrop-blur-md shadow-2xl rounded-2xl text-white border border-white/30 z-20 animate-smooth-bounce">
+        <i class="fas fa-book-open text-3xl"></i>
+    </div>
 
-    <div class="relative h-full flex items-end justify-end self-end z-0">
-        <img src="assets/images/landing_illu.png" alt="M Lhuillier Team Illustration" class="h-auto w-auto max-h-full" id="illustration">
+    <div class="absolute top-[8%] left-[60%] p-4 bg-[#a61e22] backdrop-blur-md shadow-2xl rounded-2xl text-white border border-white/30 z-20 animate-smooth-bounce">
+        <i class="fas fa-peso-sign text-3xl"></i>
+    </div>
+
+    <div class="absolute top-[50%] left-[53%] p-4 bg-[#a61e22] backdrop-blur-md shadow-2xl rounded-2xl text-white border border-white/30 z-20 animate-smooth-bounce">
+        <i class="fas fa-dollar-sign text-3xl"></i>
+    </div>
+
+    <div class="absolute top-[75%] left-[59%] p-4 bg-[#a61e22] backdrop-blur-md shadow-2xl rounded-2xl text-white border border-white/30 z-20 animate-smooth-bounce">
+        <i class="fas fa-wallet text-3xl"></i>
+    </div>
+
+    <div class="absolute top-[13%] left-[78%] p-4 bg-[#a61e22] backdrop-blur-md shadow-2xl rounded-2xl text-white border border-white/30 z-20 animate-smooth-bounce">
+        <i class="fas fa-save text-3xl"></i>
+    </div>
+
+    <div class="absolute top-[30%] right-[31%] p-4 bg-[#a61e22] backdrop-blur-md shadow-2xl rounded-2xl text-white border border-white/30 z-20 animate-smooth-bounce">
+        <i class="fas fa-money-bill-wave text-3xl"></i>
+    </div>
+
+    <div class="relative h-full w-[38%] flex items-end justify-end self-end z-0">
+        <img src="assets/images/landing_illu.png" 
+            alt="M Lhuillier Team Illustration" 
+            class="h-auto w-full max-w-[110%] object-contain origin-bottom-right scale-110" 
+            id="illustration">
     </div>
 </div>
 
@@ -101,7 +156,7 @@
             
             headerGroup.classList.replace('mt-0', '-mt-35');
             triggerBtn.style.display = 'inline-block'; 
-        }, 500);
+        }, 50);
     }
 
     function togglePassword() {

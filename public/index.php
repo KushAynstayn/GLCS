@@ -6,7 +6,20 @@ $page = $_GET['page'] ?? 'landing';
 
 // 2. Define allowed routes (This prevents users from accessing arbitrary files)
 $routes = [
-    'landing' => '../resources/views/components/landing.php',
+    // public
+    'landing' => '../resources/views/pages/landing.php',
+
+     // main pages
+    'dashboard' => '../resources/views/pages/dashboard.php',
+    'gle-import' => '../resources/views/pages/gle_import.php',
+
+    // reports
+    'reports-gle' => '../resources/views/pages/reports_gle.php',
+    'reports-overall' => '../resources/views/pages/reports_overall.php',
+
+    // admin
+    'user-management' => '../resources/views/pages/user_management.php',
+    'gl-settings' => '../resources/views/pages/gl_code_settings.php',
 
 ];
 
