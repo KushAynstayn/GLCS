@@ -28,27 +28,34 @@
     function showFetchModal(totalFiles) {
         const modal = document.getElementById('fetchModal');
         const modalContent = document.getElementById('modalContent');
-        
-        // Reset/Update info
-        document.getElementById('fileProgressText').textContent = `File count: 0/${totalFiles}`;
-        document.getElementById('progressPercent').textContent = '0%';
-        document.getElementById('progressBar').style.width = '0%';
 
-        // Show Modal
+        // reset progress
+        document.getElementById('fileProgressText').textContent =
+            `File count: 0/${totalFiles}`;
+        document.getElementById('progressPercent').textContent = "0%";
+        document.getElementById('progressBar').style.width = "0%";
+
+        // show backdrop
         modal.classList.remove('hidden');
-        setTimeout(() => {
-            modal.classList.remove('opacity-0');
-            modalContent.classList.remove('scale-95', 'opacity-0');
-            modalContent.classList.add('scale-100', 'opacity-100');
-        }, 10);
+
+        // FORCE reflow (critical fix)
+        void modal.offsetWidth;
+
+        // animate modal in
+        modalContent.classList.remove('opacity-0', 'scale-95');
+        modalContent.classList.add('opacity-100', 'scale-100');
     }
 
     function closeFetchModal() {
         const modal = document.getElementById('fetchModal');
         const modalContent = document.getElementById('modalContent');
-        modalContent.classList.add('scale-95', 'opacity-0');
+
+        modalContent.classList.remove('opacity-100', 'scale-100');
+        modalContent.classList.add('opacity-0', 'scale-95');
+
         setTimeout(() => {
             modal.classList.add('hidden');
-        }, 300);
+        }, 200);
     }
+    
 </script>

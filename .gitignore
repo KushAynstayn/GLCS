@@ -3,5 +3,7 @@
 /.env
 /storage/logs/*
 /storage/uploads/*
+/tmp/uploads/*
+/tmp/previews/*
 .DS_Store
 Thumbs.db
