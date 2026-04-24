@@ -1,5 +1,11 @@
 <?php
 $currentPage = $_GET['page'] ?? 'dashboard';
+session_start();
+
+$user = $_SESSION['user'] ?? null;
+
+$username = $user['username'] ?? 'Guest User';
+$role = $user['role'] ?? 'User';
 ?>
 
 <div id="sidebar" class="w-16 hover:w-64 group transition-all duration-300 sidebar-bg text-white h-full flex flex-col overflow-x-hidden relative">
@@ -72,6 +78,15 @@ $currentPage = $_GET['page'] ?? 'dashboard';
                     </li>
                 </ul>
             </li>
+            <li>
+                <a href="index.php?logout=1"
+                class="nav-item p-3 rounded-lg flex items-center justify-start gap-3">
+                    <i class="fas fa-sign-out-alt w-5 shrink-0"></i>
+                    <span class="opacity-0 group-hover:opacity-100 transition-all duration-300 whitespace-nowrap w-0 group-hover:w-auto overflow-hidden">
+                        Logout
+                    </span>
+                </a>
+            </li>
         </ul>
     </div>
 
@@ -80,8 +95,12 @@ $currentPage = $_GET['page'] ?? 'dashboard';
             <i class="fas fa-user"></i>
         </div>
         <div class="opacity-0 group-hover:opacity-100 transition-all duration-300 whitespace-nowrap w-0 group-hover:w-auto overflow-hidden">
-            <p class="text-sm font-bold leading-none">Admin User</p>
-            <small class="text-xs opacity-70">GLCS Administrator</small>
+            <p class="text-sm font-bold leading-none">
+                <?= htmlspecialchars($username) ?>
+            </p>
+            <small class="text-xs opacity-70">
+                <?= htmlspecialchars($role) ?>
+            </small>
         </div>
     </div>
 </div>

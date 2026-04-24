@@ -1,6 +1,4 @@
-<?php
-// user_management.php
-?>
+<?php include __DIR__ . '/../components/modals/adduser_modal.php'; ?>
 
 <div class="max-w-7xl mx-auto mb-16">
     <h1 class="text-3xl font-extrabold text-[#a61e22] tracking-tight">User Management</h1>
@@ -22,8 +20,10 @@
             </div>
         </div>
 
-        <button class="px-4 py-2 text-xs font-bold uppercase tracking-wider text-red-700 bg-white border border-red-200 rounded-lg hover:bg-[#D50000] hover:text-white transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1 flex items-center gap-2">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
+        <button onclick="openModal('add-user')" class="px-4 py-2 text-xs font-bold uppercase tracking-wider text-red-700 bg-white border border-red-200 rounded-lg hover:bg-[#D50000] hover:text-white transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1 flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+            </svg>
             Add
         </button>
     </div>
@@ -44,21 +44,36 @@
                     <th class="px-2 py-3 font-semibold">Last Name</th>
                     <th class="px-2 py-3 font-semibold">Last Online</th>
                     <th class="px-2 py-3 font-semibold">Date Modified</th>
-                    <th class="px-2 py-3 font-semibold">Access Level</th>
+                    <th class="px-2 py-3 font-semibold">Role</th>
+                    <th class="px-2 py-3 font-semibold">Status</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-50">
-                <tr onclick="openModal('userman')" class="cursor-pointer hover:bg-red-50/50 transition-colors">
-                    <td class="px-2 py-3">379</td>
-                    <td class="px-2 py-3">1</td>
-                    <td class="px-2 py-3">admi1</td>
-                    <td class="px-2 py-3">ADMIN</td>
-                    <td class="px-2 py-3"></td>
-                    <td class="px-2 py-3">ADMIN</td>
-                    <td class="px-2 py-3">2026-04-23 09:27:03</td>
-                    <td class="px-2 py-3">2026-04-23 09:27:03</td>
-                    <td class="px-2 py-3">-1</td>
-                </tr>
+
+                <?php if (!empty($users)): ?>
+                    <?php foreach ($users as $index => $user): ?>
+                        <tr onclick="openModal('userman')" class="cursor-pointer hover:bg-red-50/50 transition-colors">
+
+                            <td class="px-2 py-3"><?= $index + 1 ?></td>
+                            <td class="px-2 py-3"><?= htmlspecialchars($user['id']) ?></td>
+                            <td class="px-2 py-3"><?= htmlspecialchars($user['username']) ?></td>
+                            <td class="px-2 py-3"><?= htmlspecialchars($user['first_name'] ?? '') ?></td>
+                            <td class="px-2 py-3"><?= htmlspecialchars($user['middle_name'] ?? '') ?></td>
+                            <td class="px-2 py-3"><?= htmlspecialchars($user['last_name'] ?? '') ?></td>
+                            <td class="px-2 py-3"><?= htmlspecialchars($user['last_online'] ?? '') ?></td>
+                            <td class="px-2 py-3"><?= htmlspecialchars($user['updated_at'] ?? '') ?></td>
+                            <td class="px-2 py-3"><?= htmlspecialchars($user['role_name'] ?? 'User') ?></td>
+                            <td class="px-2 py-3"><?= htmlspecialchars($user['status'] ?? 'Active') ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="10" class="text-center py-4 text-gray-400">
+                            No users found
+                        </td>
+                    </tr>
+                <?php endif; ?>
+
             </tbody>
         </table>
 
@@ -75,6 +90,8 @@
         </div>
     </div>
 </div>
+
+<script src="../resources/assets/js/add-user.js"></script>
 
 <script>
     function openModal(id) {

@@ -14,6 +14,28 @@
         body { font-family: 'League Spartan', sans-serif; }
         .font-poppins { font-family: 'Poppins', sans-serif; }
     </style>
+
+    <?php
+        session_start();
+
+        $page = $_GET['page'] ?? 'landing';
+        $currentPage = $page;
+
+        // OPTIONAL: redirect if not logged in (protect system pages)
+        $protectedPages = [
+            'dashboard',
+            'gle-import',
+            'reports-gle',
+            'reports-overall',
+            'user-management',
+            'gl-settings'
+        ];
+
+        if (in_array($page, $protectedPages) && !isset($_SESSION['user'])) {
+            header("Location: index.php?page=landing");
+            exit;
+        }
+    ?>
 </head>
 <body class="flex flex-col h-screen overflow-hidden">
 
@@ -32,7 +54,12 @@
         <!-- SYSTEM PAGES (WITH SIDEBAR) -->
         <div class="flex h-screen overflow-hidden">
 
-            <?php include __DIR__ . '/../components/sidebar.php'; ?>
+            <?php if (isset($_SESSION['user'])): ?>
+                <?php
+                    $currentPage = $page;
+                    include __DIR__ . '/../components/sidebar.php';
+                ?>
+            <?php endif; ?>
 
             <main class="flex-1 p-6 bg-gray-100 overflow-y-auto">
                 <?php echo $content ?? ''; ?>
