@@ -67,8 +67,9 @@
         </div>
 
         <div id="login-form" class="hidden opacity-0 transition-opacity duration-700 mt-8 w-[350px] flex-shrink-0">
-            <form action="../actions/login_action.php" method="post" class="space-y-4">
-                <input type="text" name="email" placeholder="USERNAME" class="w-full px-6 py-4 border border-white/50 bg-white/10 rounded-full text-white text-center placeholder:text-white/70 focus:outline-none focus:bg-white/20 transition-all uppercase" required>
+            <form id="loginForm" class="space-y-4">
+                <input type="text" name="username" placeholder="USERNAME"
+                class="w-full px-6 py-4 border border-white/50 bg-white/10 rounded-full text-white text-center placeholder:text-white/70 focus:outline-none focus:bg-white/20 transition-all uppercase" required>
                 
                 <div class="relative w-full">
                     <input type="password" id="password-input" name="password" placeholder="PASSWORD" class="w-full px-6 py-4 border border-white/50 bg-white/10 rounded-full text-white text-center placeholder:text-white/70 focus:outline-none focus:bg-white/20 transition-all" required>
@@ -173,4 +174,27 @@
             eyeIcon.classList.add('fa-eye');
         }
     }
+
+
+    document.getElementById("loginForm").addEventListener("submit", async function(e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+
+        const res = await fetch("index.php?api=1&action=login", {
+            method: "POST",
+            body: formData
+        });
+
+        const data = await res.json();
+
+        console.log(data);
+
+        if (data.ok) {
+            window.location.href = data.redirect;
+        } else {
+            alert(data.message);
+        }
+    });
+
 </script>

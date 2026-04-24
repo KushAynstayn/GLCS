@@ -119,7 +119,7 @@ async function uploadFiles() {
         let formData = new FormData();
         formData.append("files[]", allFiles[i]);
 
-        let res = await fetch("/GLCS/public/index.php?api=upload", {
+        let res = await fetch("/GLCS/public/index.php?api=1&action=upload", {
             method: "POST",
             body: formData
         });
@@ -157,7 +157,7 @@ async function uploadFiles() {
 // =========================
 async function checkDuplicates() {
 
-    let res = await fetch("/GLCS/public/index.php?api=check", {
+    let res = await fetch("/GLCS/public/index.php?api=1&action=check", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ file_keys: uploadedFileKeys })
@@ -183,7 +183,7 @@ async function checkDuplicates() {
 // =========================
 async function insertData() {
 
-    let res = await fetch("/GLCS/public/index.php?api=insert", {
+    let res = await fetch("/GLCS/public/index.php?api=1&action=insert", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ file_keys: uploadedFileKeys })
@@ -255,7 +255,7 @@ function normalizeUploadResponse(data) {
 
 async function fetchPreview() {
 
-    let res = await fetch("/GLCS/public/index.php?api=preview", {
+    let res = await fetch("/GLCS/public/index.php?api=1&action=preview", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ file_keys: uploadedFileKeys })
@@ -337,7 +337,7 @@ async function startInsert() {
 
     try {
 
-        let res = await fetch("/GLCS/public/index.php?api=insert", {
+        let res = await fetch("/GLCS/public/index.php?api=1&action=insert", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ file_keys: uploadedFileKeys })
