@@ -3,46 +3,79 @@
 ?>
 
 <div class="max-w-7xl mx-auto mb-16">
-    <h1 class="text-3xl font-extrabold text-[#a61e22] tracking-tight">GL Code Settings</h1>
-    <p class="text-gray-500 mb-6 text-sm">Manage user permissions and access levels</p>
+    <h1 class="text-3xl font-extrabold text-[#a61e22] tracking-tight">GL Settings</h1>
+    <p class="text-gray-500 mb-6 text-sm">Configure and manage General Ledger accounts, hierarchies, and structures.</p>
 
-    <div class="flex items-end justify-between mb-8">
-        <div class="flex flex-col gap-1">
-            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Search</label>
-            <input type="text" placeholder="Search by GL code or description..." class="px-4 py-2 text-xs border border-gray-200 rounded-lg text-gray-600 focus:outline-none focus:ring-1 focus:ring-[#D50000] w-64 transition-all">
+    <div class="flex items-center justify-between mb-8">
+        <div class="flex gap-3">
+            <button onclick="openModal('gl-addgl')" class="px-6 py-3 text-xs font-bold uppercase tracking-wider text-red-700 bg-red-50 border border-red-100 rounded-lg hover:bg-red-600 hover:text-white transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1 flex items-center gap-3">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                <div class="flex flex-col items-start">
+                    <span>Add</span>
+                    <span class="text-[9px] opacity-75">New Entry</span>
+                </div>
+            </button>
+
+            <button onclick="openModal('gl-importgl')" class="px-6 py-3 text-xs font-bold uppercase tracking-wider text-red-700 bg-red-50 border border-red-100 rounded-lg hover:bg-red-600 hover:text-white transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1 flex items-center gap-3">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                <div class="flex flex-col items-start">
+                    <span>Import</span>
+                    <span class="text-[9px] opacity-75">CSV/Excel</span>
+                </div>
+            </button>
+
+            <button class="px-6 py-3 text-xs font-bold uppercase tracking-wider text-red-700 bg-red-50 border border-red-100 rounded-lg hover:bg-red-600 hover:text-white transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1 flex items-center gap-3">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                <div class="flex flex-col items-start">
+                    <span>Download</span>
+                    <span class="text-[9px] opacity-75">Export Data</span>
+                </div>
+            </button>
+
+            <button class="px-6 py-3 text-xs font-bold uppercase tracking-wider text-red-700 bg-red-50 border border-red-100 rounded-lg hover:bg-red-600 hover:text-white transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1 flex items-center gap-3">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                <div class="flex flex-col items-start">
+                    <span>Reset All</span>
+                    <span class="text-[9px] opacity-75">Clear Filters</span>
+                </div>
+            </button>
         </div>
 
-        <button class="px-4 py-2 text-xs font-bold uppercase tracking-wider text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:text-red-600 hover:border-red-200 transition-all duration-300 flex items-center gap-2">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-            Reset All
-        </button>
+        <div class="flex items-center gap-2">
+            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap">Search</label>
+            <input type="text" placeholder="Search by GL code or description..." class="px-4 py-2 text-xs border border-gray-200 rounded-lg text-gray-600 focus:outline-none focus:ring-1 focus:ring-[#D50000] w-64 transition-all">
+        </div>
     </div>
 
     <?php include __DIR__ . '/../components/modals/user-access_modal.php'; ?>
     <?php include __DIR__ . '/../components/modals/success_modal.php'; ?>
+    <?php include __DIR__ . '/../components/modals/gl-addgl_modal.php'; ?>
+    <?php include __DIR__ . '/../components/modals/gl-importgl_modal.php'; ?>
 
     <div class="border border-gray-100 rounded-xl bg-white shadow-sm overflow-hidden">
         <table class="w-full text-left text-[10px] text-gray-600 border-collapse">
             <thead class="bg-[#D50000] border-b border-[#8e191d]">
                 <tr class="text-white uppercase tracking-wider">
-                    <th class="px-2 py-3 font-semibold">No.</th>
-                    <th class="px-2 py-3 font-semibold">ID Number</th>
-                    <th class="px-2 py-3 font-semibold">Username</th>
-                    <th class="px-2 py-3 font-semibold">First Name</th>
-                    <th class="px-2 py-3 font-semibold">Middle Name</th>
-                    <th class="px-2 py-3 font-semibold">Last Name</th>
-                    <th class="px-2 py-3 font-semibold">Access Level</th>
+                    <th class="px-2 py-3 font-semibold">GL Account</th>
+                    <th class="px-2 py-3 font-semibold">Account Title</th>
+                    <th class="px-2 py-3 font-semibold">Level 4</th>
+                    <th class="px-2 py-3 font-semibold">Level 3</th>
+                    <th class="px-2 py-3 font-semibold">Level 2</th>
+                    <th class="px-2 py-3 font-semibold">Level 1</th>
+                    <th class="px-2 py-3 font-semibold">FS Account Type</th>
+                    <th class="px-2 py-3 font-semibold">Normal Balance</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-50">
                 <tr onclick="openModal('user-access')" class="cursor-pointer hover:bg-red-50/50 transition-colors">
-                    <td class="px-2 py-3">379</td>
-                    <td class="px-2 py-3">1</td>
-                    <td class="px-2 py-3">admi1</td>
-                    <td class="px-2 py-3">ADMIN</td>
-                    <td class="px-2 py-3"></td>
-                    <td class="px-2 py-3">ADMIN</td>
-                    <td class="px-2 py-3">-1</td>
+                    <td class="px-2 py-3">1001</td>
+                    <td class="px-2 py-3">Cash in Bank</td>
+                    <td class="px-2 py-3">Cash</td>
+                    <td class="px-2 py-3">Assets</td>
+                    <td class="px-2 py-3">Current Assets</td>
+                    <td class="px-2 py-3">Balance Sheet</td>
+                    <td class="px-2 py-3">Asset</td>
+                    <td class="px-2 py-3">Debit</td>
                 </tr>
             </tbody>
         </table>
@@ -76,3 +109,17 @@
         }
     }
 </script>
+
+<style>
+/* Modal Animation */
+#modal-user-access:not(.hidden) > div,
+#modal-gl-addgl:not(.hidden) > div,
+#modal-gl-importgl:not(.hidden) > div {
+    animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes pop {
+    0% { opacity: 0; transform: scale(0.95); }
+    100% { opacity: 1; transform: scale(1); }
+}
+</style>

@@ -73,7 +73,7 @@ $role = $user['role'] ?? 'User';
                     <li>
                         <a href="index.php?page=gl-settings" class="block p-3 pl-10 rounded-lg hover:bg-white/10 text-sm whitespace-nowrap">
                             <i class="fas fa-cogs mr-2"></i> 
-                            <span class="opacity-0 group-hover:opacity-100 transition-opacity duration-300">GL Code Settings</span>
+                            <span class="opacity-0 group-hover:opacity-100 transition-opacity duration-300">GL Settings</span>
                         </a>
                     </li>
                 </ul>
