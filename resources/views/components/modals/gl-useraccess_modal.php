@@ -1,12 +1,21 @@
-<div id="modal-user-access" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-    <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg border border-gray-100 modal-content">
-        <div class="px-6 py-4 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center rounded-t-xl">
-            <h2 class="text-lg font-bold text-gray-800" id="user-access-name">ADMIN ADMIN</h2>
+<div id="modal-user-access" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg transform transition-all modal-content">
+        
+        <div class="p-6 pb-0 flex items-start gap-4">
+            <div class="p-3 bg-red-50 rounded-full">
+                <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                </svg>
+            </div>
+            <div>
+                <h3 class="text-xl font-bold text-gray-900" id="user-access-name">ADMIN ADMIN</h3>
+                <p class="text-sm text-gray-500">Manage user permissions and GL code access levels.</p>
+            </div>
         </div>
 
         <div class="p-6 space-y-6">
             <div class="space-y-2">
-                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Assigned GL Codes</label>
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Assigned GL Codes</label>
                 <div class="max-h-20 overflow-y-auto p-3 border border-gray-100 rounded-lg bg-gray-50 shadow-inner">
                     <div class="flex flex-wrap gap-2">
                         <?php for($i = 1; $i <= 20; $i++): ?>
@@ -19,22 +28,22 @@
             </div>
 
             <div class="space-y-4 relative">
-                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">GL Code Access</label>
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">GL Code Access</label>
                 
                 <input type="text" id="gl-search" 
                     oninput="filterGlCodes()" 
                     onfocus="document.getElementById('gl-dropdown').classList.remove('hidden')"
                     placeholder="Search or select GL code..." 
-                    class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-[#D50000] focus:outline-none">
+                    class="w-full px-4 py-2 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all cursor-pointer">
                 
-                <ul id="gl-dropdown" class="hidden absolute z-50 w-full bg-white border border-gray-200 mt-1 max-h-48 overflow-y-auto rounded-lg shadow-lg">
-                    <li onclick="selectGlCode('100001')" class="cursor-pointer px-3 py-2 text-sm hover:bg-red-50 hover:text-red-600 transition-colors">100001</li>
-                    <li onclick="selectGlCode('100002')" class="cursor-pointer px-3 py-2 text-sm hover:bg-red-50 hover:text-red-600 transition-colors">100002</li>
-                    <li onclick="selectGlCode('100003')" class="cursor-pointer px-3 py-2 text-sm hover:bg-red-50 hover:text-red-600 transition-colors">100003</li>
-                    <li onclick="selectGlCode('100004')" class="cursor-pointer px-3 py-2 text-sm hover:bg-red-50 hover:text-red-600 transition-colors">100004</li>
-                    <li onclick="selectGlCode('100005')" class="cursor-pointer px-3 py-2 text-sm hover:bg-red-50 hover:text-red-600 transition-colors">100005</li>
-                    <li onclick="selectGlCode('100006')" class="cursor-pointer px-3 py-2 text-sm hover:bg-red-50 hover:text-red-600 transition-colors">100006</li>
-                    <li onclick="selectGlCode('100007')" class="cursor-pointer px-3 py-2 text-sm hover:bg-red-50 hover:text-red-600 transition-colors">100007</li>
+                <ul id="gl-dropdown" class="hidden absolute z-[60] w-full bg-white border border-gray-200 mt-1 max-h-48 overflow-y-auto rounded-lg shadow-xl">
+                    <li onclick="selectGlCode('100001')" class="cursor-pointer px-3 py-2 text-sm hover:bg-gray-50 transition-colors">100001</li>
+                    <li onclick="selectGlCode('100002')" class="cursor-pointer px-3 py-2 text-sm hover:bg-gray-50 transition-colors">100002</li>
+                    <li onclick="selectGlCode('100003')" class="cursor-pointer px-3 py-2 text-sm hover:bg-gray-50 transition-colors">100003</li>
+                    <li onclick="selectGlCode('100004')" class="cursor-pointer px-3 py-2 text-sm hover:bg-gray-50 transition-colors">100004</li>
+                    <li onclick="selectGlCode('100005')" class="cursor-pointer px-3 py-2 text-sm hover:bg-gray-50 transition-colors">100005</li>
+                    <li onclick="selectGlCode('100006')" class="cursor-pointer px-3 py-2 text-sm hover:bg-gray-50 transition-colors">100006</li>
+                    <li onclick="selectGlCode('100007')" class="cursor-pointer px-3 py-2 text-sm hover:bg-gray-50 transition-colors">100007</li>
                 </ul>
                 
                 <div id="tag-container" class="flex flex-wrap gap-2 pt-2">
@@ -42,9 +51,15 @@
             </div>
         </div>
 
-        <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end gap-3 rounded-b-xl">
-            <button onclick="closeModal('user-access')" class="px-4 py-2 text-xs font-bold uppercase tracking-wider text-gray-600 hover:text-gray-800 transition-colors">Cancel</button>
-            <button onclick="closeModal('user-access'); openModal('success'); setTimeout(() => closeModal('success'), 1000);" class="px-6 py-2 text-xs font-bold uppercase tracking-wider text-white bg-[#D50000] rounded-lg hover:bg-[#b00000] transition-colors shadow-sm">Save</button>
+        <div class="px-6 py-4 border-t border-gray-100 flex justify-end gap-3 rounded-b-2xl">
+            <button type="button" onclick="closeModal('user-access')" 
+                class="px-6 py-2 text-xs font-bold uppercase tracking-wider text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all">
+                Cancel
+            </button>
+            <button type="button" onclick="closeModal('user-access'); openModal('success'); setTimeout(() => closeModal('success'), 1000);" 
+                class="px-6 py-2 text-xs font-bold uppercase tracking-wider text-white bg-[#D50000] rounded-lg hover:bg-red-700 shadow-md hover:shadow-lg transition-all">
+                Save Changes
+            </button>
         </div>
     </div>
 </div>
@@ -104,7 +119,6 @@
         0% { opacity: 0; transform: scale(0.95); }
         100% { opacity: 1; transform: scale(1); }
     }
-    /* Custom scrollbar for containers */
     .overflow-y-auto::-webkit-scrollbar {
         width: 4px;
     }
