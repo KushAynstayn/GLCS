@@ -1,5 +1,3 @@
-<?php include __DIR__ . '/../components/modals/adduser_modal.php'; ?>
-
 <div class="max-w-7xl mx-auto mb-16">
     <h1 class="text-3xl font-extrabold text-[#a61e22] tracking-tight">User Management</h1>
     <p class="text-gray-500 mb-6 text-sm">Manage user accounts and statuses</p>
@@ -7,9 +5,7 @@
     <div class="flex items-center justify-between mb-8">
         <div class="flex gap-3">
             <button onclick="openModal('add-user')" class="px-6 py-3 text-xs font-bold uppercase tracking-wider text-red-700 bg-red-50 border border-red-100 rounded-lg hover:bg-red-600 hover:text-white transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1 flex items-center gap-3">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
-                </svg>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                 <div class="flex flex-col items-start">
                     <span>Add</span>
                     <span class="text-[9px] opacity-75">New User</span>
@@ -33,7 +29,8 @@
         </div>
     </div>
 
-    <?php include __DIR__ . '/../components/modals/userman_modal.php'; ?>
+    <?php include __DIR__ . '/../components/modals/userman-add_modal.php'; ?>
+    <?php include __DIR__ . '/../components/modals/userman-edit_modal.php'; ?>
     <?php include __DIR__ . '/../components/modals/reset-password_modal.php'; ?>
     <?php include __DIR__ . '/../components/modals/success_modal.php'; ?>
 

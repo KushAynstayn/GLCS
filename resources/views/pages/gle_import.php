@@ -30,7 +30,7 @@
             <h2 id="fileCount" class="font-bold text-lg text-[#0D2149]">Files: 0</h2>
 
             <button onclick="uploadFiles()"
-                class="bg-[#a61e22] text-white px-4 py-2 rounded-lg text-sm">
+                class="bg-[#D50000] text-white px-4 py-2 rounded-lg text-sm">
                 Upload & Preview
             </button>
         </div>

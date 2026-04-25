@@ -31,14 +31,6 @@
                     <span class="text-[9px] opacity-75">Export Data</span>
                 </div>
             </button>
-
-            <button class="px-6 py-3 text-xs font-bold uppercase tracking-wider text-red-700 bg-red-50 border border-red-100 rounded-lg hover:bg-red-600 hover:text-white transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1 flex items-center gap-3">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                <div class="flex flex-col items-start">
-                    <span>Reset All</span>
-                    <span class="text-[9px] opacity-75">Clear Filters</span>
-                </div>
-            </button>
         </div>
 
         <div class="flex items-center gap-2">
@@ -47,10 +39,10 @@
         </div>
     </div>
 
-    <?php include __DIR__ . '/../components/modals/user-access_modal.php'; ?>
-    <?php include __DIR__ . '/../components/modals/success_modal.php'; ?>
+    <?php include __DIR__ . '/../components/modals/gl-useraccess_modal.php'; ?>
     <?php include __DIR__ . '/../components/modals/gl-addgl_modal.php'; ?>
     <?php include __DIR__ . '/../components/modals/gl-importgl_modal.php'; ?>
+        <?php include __DIR__ . '/../components/modals/success_modal.php'; ?>
 
     <div class="border border-gray-100 rounded-xl bg-white shadow-sm overflow-hidden">
         <table class="w-full text-left text-[10px] text-gray-600 border-collapse">
@@ -64,6 +56,7 @@
                     <th class="px-2 py-3 font-semibold">Level 1</th>
                     <th class="px-2 py-3 font-semibold">FS Account Type</th>
                     <th class="px-2 py-3 font-semibold">Normal Balance</th>
+                    <th class="px-2 py-3 font-semibold text-center">Status</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-50">
@@ -76,6 +69,13 @@
                     <td class="px-2 py-3">Balance Sheet</td>
                     <td class="px-2 py-3">Asset</td>
                     <td class="px-2 py-3">Debit</td>
+                    <td class="px-2 py-3 text-center">
+                        <label onclick="event.stopPropagation()" class="relative inline-flex items-center justify-center cursor-pointer gap-2">
+                            <input type="checkbox" checked class="sr-only peer" onchange="toggleLabel(this)">
+                            <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#D50000]"></div>
+                            <span class="text-[9px] font-bold text-[#D50000] uppercase status-label">Enabled</span>
+                        </label>
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -106,6 +106,18 @@
         var modal = document.getElementById('modal-' + id);
         if (modal) {
             modal.classList.add('hidden');
+        }
+    }
+
+    // Function to toggle the label text
+    function toggleLabel(checkbox) {
+        const label = checkbox.parentElement.querySelector('.status-label');
+        if (checkbox.checked) {
+            label.textContent = 'Enabled';
+            label.classList.replace('text-gray-500', 'text-[#D50000]');
+        } else {
+            label.textContent = 'Disabled';
+            label.classList.replace('text-[#D50000]', 'text-gray-500');
         }
     }
 </script>
