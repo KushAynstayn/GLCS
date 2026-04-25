@@ -112,89 +112,51 @@ async function uploadFiles() {
 
     showFetchModal(allFiles.length);
 
-    uploadedFileKeys = [];
-
-    for (let i = 0; i < allFiles.length; i++) {
+    try {
 
         let formData = new FormData();
-        formData.append("files[]", allFiles[i]);
+
+        // ✅ send ALL files in ONE request
+        allFiles.forEach(file => {
+            formData.append("files[]", file);
+        });
 
         let res = await fetch("/GLCS/public/index.php?api=1&action=upload", {
             method: "POST",
             body: formData
         });
 
+        if (!res.ok) {
+            throw new Error("Upload failed");
+        }
+
         let data = await res.json();
 
-        if (data.file_keys) {
-            uploadedFileKeys.push(...data.file_keys);
+        if (!data.ok) {
+            throw new Error(data.message || "Upload error");
         }
 
-        if (data.file_key) {
-            uploadedFileKeys.push(data.file_key);
-        }
+        uploadedFileKeys = data.file_keys || [];
 
-        let percent = Math.round(((i + 1) / allFiles.length) * 100);
-
+        // ✅ update progress UI
         document.getElementById("fileProgressText").textContent =
-            `File count: ${i + 1}/${allFiles.length}`;
+            `File count: ${allFiles.length}/${allFiles.length}`;
 
-        document.getElementById("progressPercent").textContent =
-            percent + "%";
+        document.getElementById("progressPercent").textContent = "100%";
+        document.getElementById("progressBar").style.width = "100%";
 
-        document.getElementById("progressBar").style.width =
-            percent + "%";
+        closeFetchModal();
+
+        // 👉 go to preview
+        await fetchPreview();
+
+    } catch (err) {
+        console.error(err);
+        closeFetchModal();
+        alert("Upload failed: " + err.message);
     }
-
-    closeFetchModal();
-
-    // 🔥 NEXT STEP → PREVIEW
-    await fetchPreview();
 }
 
-// =========================
-// DUPLICATE CHECK
-// =========================
-async function checkDuplicates() {
-
-    let res = await fetch("/GLCS/public/index.php?api=1&action=check", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ file_keys: uploadedFileKeys })
-    });
-
-    let data = await res.json();
-
-    console.log("CHECK:", data);
-
-    renderPreview(); // show preview anyway
-
-    if (data.total_duplicates > 0) {
-        alert(`Warning: ${data.total_duplicates} duplicates found`);
-    } else {
-        alert("No duplicates found. Ready to insert.");
-    }
-
-    await insertData();
-}
-
-// =========================
-// INSERT
-// =========================
-async function insertData() {
-
-    let res = await fetch("/GLCS/public/index.php?api=1&action=insert", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ file_keys: uploadedFileKeys })
-    });
-
-    let data = await res.json();
-
-    console.log("INSERT:", data);
-
-    resetAll();
-}
 
 // =========================
 // PREVIEW ALL FILES
@@ -233,23 +195,6 @@ function resetAll() {
 
     fileListContainer.classList.add('hidden');
     document.getElementById("previewContainer").innerHTML = "";
-}
-
-
-function normalizeUploadResponse(data) {
-    if (!data) return [];
-
-    // SINGLE FILE MODE
-    if (data.file_key) {
-        return [data.file_key];
-    }
-
-    // BATCH MODE
-    if (Array.isArray(data.file_keys)) {
-        return data.file_keys;
-    }
-
-    return [];
 }
 
 

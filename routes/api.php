@@ -4,6 +4,7 @@ require_once __DIR__ . '/../app/Core/Database.php';
 
 require_once __DIR__ . '/../app/Controllers/AuthController.php';
 require_once __DIR__ . '/../app/Controllers/LedgerController.php';
+require_once __DIR__ . '/../app/Controllers/GLCodeController.php';
 
 header('Content-Type: application/json');
 
@@ -51,6 +52,24 @@ switch ($action) {
     $controller = new ReportController();
     $controller->getPartners();
     break;
+
+    /**
+     * =========================
+     * GL CODES
+     * =========================
+     */
+
+    case 'gl-upload':
+        (new GLCodeController())->upload();
+        break;
+
+    case 'gl-preview':
+        (new GLCodeController())->preview();
+        break;
+
+    case 'gl-insert':
+        (new GLCodeController())->insert();
+        break;
 
     default:
         echo json_encode([
