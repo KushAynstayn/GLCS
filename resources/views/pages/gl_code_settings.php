@@ -51,6 +51,9 @@
     <?php include __DIR__ . '/../components/modals/success_modal.php'; ?>
     <?php include __DIR__ . '/../components/modals/gl-addgl_modal.php'; ?>
     <?php include __DIR__ . '/../components/modals/gl-importgl_modal.php'; ?>
+    <?php include __DIR__ . '/../components/modals/fetch_modal.php'; ?>
+    <?php include __DIR__ . '/../components/modals/preview_modal.php'; ?>
+    <?php include __DIR__ . '/../components/modals/insert_modal.php'; ?>
 
     <div class="border border-gray-100 rounded-xl bg-white shadow-sm overflow-hidden">
         <table class="w-full text-left text-[10px] text-gray-600 border-collapse">
@@ -108,6 +111,156 @@
             modal.classList.add('hidden');
         }
     }
+
+    async function uploadGLFiles() {
+        if (glFiles.length === 0) {
+            return alert("Please select files first.");
+        }
+
+        let formData = new FormData();
+
+        glFiles.forEach(file => {
+            formData.append('files[]', file);
+        });
+
+        showFetchModal(glFiles.length);
+
+        const res = await fetch('index.php?api=gl-upload', {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await res.json();
+
+        if (!data.ok) {
+            alert(data.message);
+            return;
+        }
+
+        // PREVIEW
+        const previewRes = await fetch('index.php?api=gl-preview', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ file_keys: data.file_keys })
+        });
+
+        const previewData = await previewRes.json();
+
+        closeFetchModal();
+        openPreviewModal(previewData);
+
+        // STORE KEYS
+        window.glFileKeys = data.file_keys;
+    }
+
+
+    async function insertGLData() {
+        console.log("INSERT CLICKED"); // 👈 ADD THIS
+        const res = await fetch('index.php?api=gl-insert', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ file_keys: window.glFileKeys })
+        });
+
+        const data = await res.json();
+
+        alert(`Inserted ${data.inserted} records`);
+    }
+
+
+    function openPreviewModal(data) {
+        const container = document.getElementById('previewTables');
+        container.innerHTML = '';
+
+        data.data.forEach(file => {
+
+            let table = document.createElement('table');
+            table.className = "w-full text-xs border mb-4";
+
+            let headers = Object.keys(file.preview[0] || {});
+
+            let thead = `<tr class="bg-gray-100">`;
+            headers.forEach(h => {
+                thead += `<th class="px-2 py-1 border">${h}</th>`;
+            });
+            thead += `</tr>`;
+
+            let rows = '';
+            file.preview.forEach(row => {
+                rows += `<tr>`;
+                headers.forEach(h => {
+                    rows += `<td class="px-2 py-1 border">${row[h] ?? ''}</td>`;
+                });
+                rows += `</tr>`;
+            });
+
+            table.innerHTML = `<thead>${thead}</thead><tbody>${rows}</tbody>`;
+            container.appendChild(table);
+        });
+
+        document.getElementById('previewModal').classList.remove('hidden');
+    }
+
+    function closePreviewModal() {
+        document.getElementById('previewModal').classList.add('hidden');
+    }
+
+    function openInsertModal() {
+        closePreviewModal();
+        document.getElementById('insertModal').classList.remove('hidden');
+
+        // 🔥 ADD THIS
+        startInsert();
+    }
+
+
+    async function startInsert() {
+
+        let progressBar = document.getElementById("insertProgressBar");
+        let progressText = document.getElementById("insertProgressText");
+
+        progressBar.style.width = "20%";
+        progressText.textContent = "Starting insert...";
+
+        try {
+
+            if (!window.glFileKeys || window.glFileKeys.length === 0) {
+                throw new Error("No uploaded files found");
+            }
+
+            let res = await fetch('index.php?api=gl-insert', {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ file_keys: window.glFileKeys })
+            });
+
+            if (!res.ok) {
+                throw new Error("Insert request failed");
+            }
+
+            let data = await res.json();
+
+            if (!data.ok) {
+                throw new Error(data.message || "Insert failed");
+            }
+
+            progressBar.style.width = "100%";
+            progressText.textContent = "Completed";
+
+        } catch (err) {
+
+            console.error(err);
+
+            progressText.textContent = "Error occurred";
+            alert("Insert failed: " + err.message);
+        }
+    }
+
+
+    function closeInsertModal() {
+        document.getElementById('insertModal').classList.add('hidden');
+    }
+
 </script>
 
 <style>
