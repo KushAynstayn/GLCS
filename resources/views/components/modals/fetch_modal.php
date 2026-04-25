@@ -8,7 +8,7 @@
             </div>
             <div>
                 <h3 class="text-lg font-bold text-gray-900">Extracting Data</h3>
-                <p class="text-sm text-gray-500">Streaming Excel files and preparing JSON previews...</p>
+                <p class="text-sm text-gray-500">Streaming Excel files and preparing for insert...</p>
             </div>
         </div>
 

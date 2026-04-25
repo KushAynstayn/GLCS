@@ -99,11 +99,5 @@
         renderGLFileList();
     }
 
-    async function uploadGLFiles() {
-        if (glFiles.length === 0) return alert("Please select files first.");
-        
-        // Add your upload logic here (similar to gle_import.php)
-        console.log("Uploading files...", glFiles);
-        // showFetchModal(glFiles.length); 
-    }
+
 </script>
