@@ -135,34 +135,57 @@ abstract class BaseImportService
         foreach ($fileKeys as $key) {
 
             $path = $this->uploadPath . $key . '.json';
+
             if (!file_exists($path)) continue;
 
             $json = json_decode(file_get_contents($path), true);
             $rows = $json['rows'] ?? [];
 
-            $batch = [];
-            $count = 0;
+            // ✅ CREATE IMPORT RECORD
+            $importId = $this->createImportSession($key, $path, count($rows));
 
-            foreach ($rows as $row) {
+            try {
 
-                $batch[] = $this->cleanRow($row);
-                $count++;
+                $batch = [];
+                $count = 0;
+                $inserted = 0;
 
-                if ($count === 200) {
-                    $total += $this->bulkInsert($batch);
-                    $batch = [];
-                    $count = 0;
+                foreach ($rows as $row) {
+
+                    $batch[] = $this->cleanRow($row);
+                    $count++;
+
+                    if ($count === 200) {
+                        $inserted += $this->bulkInsert($batch);
+                        $batch = [];
+                        $count = 0;
+                    }
                 }
-            }
 
-            if (!empty($batch)) {
-                $total += $this->bulkInsert($batch);
-            }
+                if (!empty($batch)) {
+                    $inserted += $this->bulkInsert($batch);
+                }
 
-            unlink($path);
+                // ✅ SUCCESS UPDATE
+                $this->updateImportSession($importId, $inserted, 'completed');
+
+                $total += $inserted;
+
+                unlink($path);
+
+            } catch (Exception $e) {
+
+                // ❌ FAILED UPDATE
+                $this->updateImportSession($importId, 0, 'failed');
+
+                continue;
+            }
         }
 
-        return ['ok' => true, 'inserted' => $total];
+        return [
+            'ok' => true,
+            'inserted' => $total
+        ];
     }
 
     private function bulkInsert($rows)
@@ -196,6 +219,37 @@ abstract class BaseImportService
 
         return count($rows);
     }
+
+
+    private function createImportSession($fileKey, $filePath, $totalRows)
+    {
+        $stmt = $this->db->prepare("
+            INSERT INTO imports (file_name, file_path, uploaded_by, total_rows, status)
+            VALUES (?, ?, ?, ?, 'processing')
+        ");
+
+        $stmt->execute([
+            $fileKey,
+            $filePath,
+            $_SESSION['user_id'] ?? 0,
+            $totalRows
+        ]);
+
+        return $this->db->lastInsertId();
+    }
+
+
+    private function updateImportSession($importId, $insertedRows, $status)
+    {
+        $stmt = $this->db->prepare("
+            UPDATE imports
+            SET inserted_rows = ?, status = ?
+            WHERE id = ?
+        ");
+
+        $stmt->execute([$insertedRows, $status, $importId]);
+    }
+
 
     protected function normalizeHeaders($headers)
     {

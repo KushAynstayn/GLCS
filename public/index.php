@@ -4,6 +4,8 @@ error_reporting(E_ALL);
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 
+session_start();
+
 require_once __DIR__ . '/../vendor/autoload.php';
 
 require_once '../app/Core/Controller.php';
@@ -11,11 +13,17 @@ require_once '../app/Core/Model.php';
 require_once '../app/Core/Database.php';
 require_once '../app/Helpers/functions.php';
 
+// ✅ RBAC + MIDDLEWARE
+require_once '../app/Helpers/RBAC.php';
+require_once '../app/Middleware/AuthMiddleware.php';
+require_once '../app/Middleware/PermissionMiddleware.php';
+
+/**
+ * =========================
+ * LOGOUT
+ * =========================
+ */
 if (isset($_GET['logout'])) {
-
-    session_start();
-
-    require_once '../app/Core/Database.php';
 
     $db = Database::getInstance()->getConnection();
 
@@ -36,7 +44,7 @@ if (isset($_GET['logout'])) {
 
 /**
  * =========================
- * API ROUTING (SAFE)
+ * API ROUTING
  * =========================
  */
 if (isset($_GET['api'])) {
@@ -50,6 +58,33 @@ if (isset($_GET['api'])) {
  * =========================
  */
 $page = $_GET['page'] ?? 'landing';
+
+// ✅ PROTECTED PAGES
+$protectedPages = [
+    'dashboard',
+    'gle-import',
+    'reports-gle',
+    'reports-overall',
+    'user-management',
+    'gl-settings'
+];
+
+if (in_array($page, $protectedPages)) {
+    AuthMiddleware::handle();
+}
+
+// ✅ PERMISSION MAP
+$pagePermissions = [
+    'gle-import' => 'gle_import.access',
+    'reports-gle' => 'reports.gle_reports.view',
+    'reports-overall' => 'reports.access',
+    'user-management' => 'admin_settings.user_management',
+    'gl-settings' => 'admin_settings.gl_code_settings',
+];
+
+if (isset($pagePermissions[$page])) {
+    PermissionMiddleware::check($pagePermissions[$page]);
+}
 
 $routes = [
     'landing' => '../resources/views/pages/landing.php',
@@ -67,6 +102,7 @@ $routes = [
 
 $fileToLoad = $routes[$page] ?? $routes['landing'];
 
+// ✅ LOAD USER MANAGEMENT DATA
 if ($page === 'user-management') {
     require_once '../app/Controllers/UserController.php';
 

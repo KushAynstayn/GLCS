@@ -13,7 +13,7 @@
             </div>
         </div>
 
-        <form id="createUserForm" action="process_user.php" method="POST" class="p-6 space-y-4">
+        <form id="createUserForm" class="p-6 space-y-4">
             <div>
                 <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">ID Number</label>
                 <input type="text" name="id_number" id="input_id_number" required
@@ -59,7 +59,7 @@
                 
                 <div class="relative" id="dept-dropdown-wrapper">
                     <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Department</label>
-                    <input type="hidden" name="department_id" id="selected_dept_id">
+                    <input type="hidden" id="selected_dept_id" name="department_id">    
                     <input type="text" id="dept_search" placeholder="Select or Add..." 
                         class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all cursor-pointer"
                         onclick="toggleDeptDropdown(true)">
@@ -85,24 +85,37 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Level 4 Category</label>
-                    <select id="level4_category" onchange="updateGlOptions()" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all cursor-pointer">
-                        <option value="">Select Category</option>
-                        <option value="Cash on Hand">Cash on Hand</option>
-                        <option value="Cash on Bank">Cash on Bank</option>
-                        <option value="Revolving Fund Support">Revolving Fund Support</option>
-                    </select>
+            <div class="relative" id="lvl4-wrapper">
+                 <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">
+                    Level 4 Category
+                </label>
+
+                <input type="text" id="lvl4_input"
+                    placeholder="Search Category..."
+                    onclick="toggleLvl4Dropdown(true)"
+                    class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg mb-1">
+
+                <div id="lvl4_dropdown" onclick="event.stopPropagation()" class="hidden absolute z-[100] w-full mt-1 bg-white border rounded-lg shadow max-h-64 overflow-y-auto">
+
+                    <div class="px-3 py-2 border-b">
+                        <label class="flex items-center gap-2 font-bold">
+                            <input type="checkbox" onchange="toggleAllLvl4(this)"> Select All
+                        </label>
+                    </div>
+
+                    <div id="lvl4_options"></div>
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Assign GL Codes</label>
                     <div class="relative" id="gl-dropdown-wrapper">
-                        <input type="text" id="gl_search_input" readonly placeholder="Select GL Codes..." 
-                            class="w-full px-4 py-2 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all cursor-pointer"
+                        <input type="text"  id="gl_global_search"
+                            onclick="handleGlClick()"
+                            autocomplete="off"        
+                            placeholder="Search any GL code..."
+                            class="w-full px-4 py-2 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none"
                             onclick="toggleGlDropdown(true)">
                         
-                        <div id="gl_dropdown" class="absolute z-[100] w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-xl hidden max-h-64 overflow-y-auto">
+                        <div id="gl_dropdown" onclick="event.stopPropagation()" class="absolute z-[100] w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-xl hidden max-h-48 overflow-y-auto">
                             <div class="px-3 py-2 border-b border-gray-100 bg-gray-50">
                                 <label class="flex items-center gap-2 cursor-pointer font-bold text-sm text-gray-700">
                                     <input type="checkbox" id="gl_select_all" onchange="toggleSelectAll()"> Select All
@@ -114,11 +127,13 @@
                 </div>
             </div>
             
-            <div id="gl_tags_container" class="flex flex-wrap gap-2 mt-3"></div>
+            <div id="gl_tags_container" style="scrollbar-width: thin;"
+                class="flex flex-wrap gap-2 mt-3 max-h-28 overflow-y-auto border border-gray-200 rounded-lg p-2">
+            </div>
             <div id="hidden_gl_inputs"></div>
 
             <div class="flex justify-end gap-3 mt-8 pt-4 border-t border-gray-100">
-                <button type="button" onclick="closeModal('add-user')" 
+                <button type="button" onclick="closeAddUserModal()"
                     class="px-6 py-2 text-xs font-bold uppercase tracking-wider text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all">
                     Cancel
                 </button>
@@ -132,13 +147,10 @@
 </div>
 
 <script>
-    // --- Mock Data ---
-    const glCategoryMap = {
-        "Cash on Hand": ["111157", "111158", "111159"],
-        "Cash on Bank": ["111201", "111202"],
-        "Revolving Fund Support": ["111301", "111302", "111303", "111304", "111305"]
-    };
 
+    let selectedGLs = {}; 
+
+    
     function toggleGlDropdown(show) {
         document.getElementById('gl_dropdown').classList.toggle('hidden', !show);
     }
@@ -183,28 +195,52 @@
     }
 
     function updateGlTags() {
+
+        const checkboxes = document.querySelectorAll('.gl-checkbox');
+
+        // ✅ Update state from currently visible checkboxes
+        checkboxes.forEach(cb => {
+
+            const id = cb.value;
+
+            if (cb.checked) {
+                selectedGLs[id] = {
+                    id: id,
+                    code: cb.getAttribute('data-code'),
+                    title: cb.getAttribute('data-title')
+                };
+            } else {
+                delete selectedGLs[id];
+            }
+        });
+
+        // ✅ Rebuild UI from STATE (not DOM)
         const container = document.getElementById('gl_tags_container');
         const hiddenInputs = document.getElementById('hidden_gl_inputs');
-        const checkboxes = document.querySelectorAll('.gl-checkbox');
-        
+
         container.innerHTML = '';
         hiddenInputs.innerHTML = '';
-        
-        checkboxes.forEach(cb => {
-            if (cb.checked) {
-                // Add tag UI
-                const tag = document.createElement('span');
-                tag.className = "bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-bold flex items-center gap-1";
-                tag.textContent = cb.value;
-                container.appendChild(tag);
 
-                // Add hidden input
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = 'gl_codes[]';
-                input.value = cb.value;
-                hiddenInputs.appendChild(input);
-            }
+        Object.values(selectedGLs).forEach(gl => {
+
+            // UI tag
+            const tag = document.createElement('span');
+            tag.className = "bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-bold flex items-center gap-1";
+
+            tag.innerHTML = `
+                ${gl.code} - ${gl.title}
+                <button type="button" onclick="removeGl('${gl.id}')" class="ml-1 text-red-500">✕</button>
+            `;
+
+            container.appendChild(tag);
+
+            // hidden input (for backend)
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'gl_codes[]';
+            input.value = gl.id;
+
+            hiddenInputs.appendChild(input);
         });
     }
 
@@ -243,17 +279,28 @@
     function handleDeptEnter(e) {
         if (e.key === 'Enter') {
             e.preventDefault();
+
             const val = newDeptInput.value.trim();
+
             if (val) {
+
+                document.getElementById('department_name').value = val;
+
+                const newId = 'new_' + Date.now();
+
                 const newDiv = document.createElement('div');
                 newDiv.className = "px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm";
                 newDiv.textContent = val;
-                newDiv.onclick = () => selectDept('new_' + Date.now(), val);
+                newDiv.onclick = () => selectDept(newId, val);
+
                 deptOptions.prepend(newDiv);
+
                 newDeptInput.value = '';
+
                 addTrigger.classList.remove('hidden');
                 addInputContainer.classList.add('hidden');
-                selectDept('new_' + Date.now(), val);
+
+                selectDept(newId, val);
             }
         }
     }
@@ -268,10 +315,317 @@
     });
 
     function openModal(id) {
+
+        if (id === 'add-user') {
+            closeAddUserModal(); // 🔥 force fresh state before opening
+        }
+
         document.getElementById('modal-' + id).classList.remove('hidden');
     }
 
     function closeModal(id) {
         document.getElementById('modal-' + id).classList.add('hidden');
     }
+
+
+
+    let selectedCategories = [];
+
+    async function loadLevel4() {
+        const res = await fetch('index.php?api=gl-level4');
+        const data = await res.json();
+
+        const container = document.getElementById('lvl4_options');
+        container.innerHTML = '';
+
+        data.data.forEach(cat => {
+            const div = document.createElement('div');
+
+            div.className = "px-3 py-2 flex gap-2";
+
+            div.innerHTML = `
+                <input type="checkbox" value="${cat}" onchange="handleLvl4Change()">
+                <span>${cat}</span>
+            `;
+
+            container.appendChild(div);
+        });
+    }
+
+    function handleLvl4Change() {
+        const checked = document.querySelectorAll('#lvl4_options input:checked');
+
+        selectedCategories = Array.from(checked).map(cb => cb.value);
+
+        document.getElementById('lvl4_input').value =
+            selectedCategories.join(', ') || '';
+
+        loadGLCodesByCategory();
+
+        document.getElementById('lvl4_dropdown').classList.add('hidden');
+    }
+
+    function toggleAllLvl4(cb) {
+        document.querySelectorAll('#lvl4_options input')
+            .forEach(x => x.checked = cb.checked);
+
+        handleLvl4Change();
+    }
+
+    async function loadGLCodesByCategory() {
+
+        const res = await fetch('index.php?api=gl-by-category', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ categories: selectedCategories })
+        });
+
+        const data = await res.json();
+
+        const container = document.getElementById('gl_options_list');
+        container.innerHTML = '';
+
+        data.data.forEach(gl => {
+
+            const alreadySelected = document.querySelector(
+                `#hidden_gl_inputs input[value="${gl.id}"]`
+            );
+
+            const div = document.createElement('div');
+            div.className = "px-3 py-2 flex gap-2";
+
+            div.innerHTML = `
+                <input 
+                    type="checkbox" 
+                    class="gl-checkbox" 
+                    value="${gl.id}" 
+                    data-id="${gl.id}"
+                    data-code="${gl.gl_account}"
+                    data-title="${gl.account_title}"
+                    ${alreadySelected ? 'checked' : ''}
+                    onchange="updateGlTags()"
+                >
+                <span>${gl.gl_account} - ${gl.account_title}</span>
+            `;
+
+            container.appendChild(div);
+        });
+    }
+
+    function toggleLvl4Dropdown(show) {
+        document.getElementById('lvl4_dropdown')
+            .classList.toggle('hidden', !show);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadLevel4();
+    });
+
+
+
+    document.getElementById('createUserForm')
+    .addEventListener('submit', async function(e) {
+
+        e.preventDefault();
+
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData.entries());
+
+        data.gl_codes = formData.getAll('gl_codes[]');
+
+        const res = await fetch('index.php?api=create-user', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+
+        const result = await res.json();
+
+        if (!result.ok) {
+            alert(result.message);
+            return;
+        }
+
+        alert('User created successfully');
+        location.reload();
+    });
+
+
+    document.addEventListener('click', function(e) {
+
+        const lvl4Wrapper = document.getElementById('lvl4-wrapper');
+
+        if (!lvl4Wrapper.contains(e.target)) {
+            document.getElementById('lvl4_dropdown')
+                .classList.add('hidden');
+        }
+
+    });
+
+
+    function resetGlState() {
+
+        selectedCategories = [];
+
+        const search = document.getElementById('gl_search_input');
+        if (search) search.value = '';
+
+        document.getElementById('gl_tags_container').innerHTML = '';
+        document.getElementById('hidden_gl_inputs').innerHTML = '';
+        document.getElementById('gl_options_list').innerHTML = '';
+
+        const selectAll = document.getElementById('gl_select_all');
+        if (selectAll) selectAll.checked = false;
+    }
+
+
+
+    function closeAddUserModal() {
+
+        // CLOSE MODAL
+        document.getElementById('modal-add-user').classList.add('hidden');
+
+        // =========================
+        // RESET FORM
+        // =========================
+        document.getElementById('createUserForm').reset();
+
+        // =========================
+        // RESET DEPARTMENT
+        // =========================
+        document.getElementById('dept_search').value = '';
+        const deptId = document.getElementById('selected_dept_id');
+        if (deptId) deptId.value = '';
+
+        const deptName = document.getElementById('department_name');
+        if (deptName) deptName.value = '';
+
+        // =========================
+        // RESET LEVEL 4
+        // =========================
+        selectedCategories = [];
+
+        document.getElementById('lvl4_input').value = '';
+
+        document.querySelectorAll('#lvl4_options input')
+            .forEach(cb => cb.checked = false);
+
+        // 🔥 VERY IMPORTANT
+        document.getElementById('lvl4_dropdown').classList.add('hidden');
+
+        // =========================
+        // RESET GL CODES (FULL CLEAN)
+        // =========================
+
+        resetGlState();
+
+        document.getElementById('gl_dropdown').classList.add('hidden');
+        // 7. Close dropdown
+        document.getElementById('gl_dropdown').classList.add('hidden');
+    }
+
+
+    function removeGl(id) {
+
+        delete selectedGLs[id];
+
+        // uncheck if visible
+        document.querySelectorAll('.gl-checkbox').forEach(cb => {
+            if (cb.value == id) cb.checked = false;
+        });
+
+        updateGlTags();
+    }
+
+
+    document.getElementById('lvl4_input').addEventListener('input', function () {
+
+        const filter = this.value.toLowerCase();
+
+        const items = document.querySelectorAll('#lvl4_options div');
+
+        items.forEach(item => {
+            const text = item.textContent.toLowerCase();
+
+            item.style.display = text.includes(filter) ? '' : 'none';
+        });
+
+    });
+
+
+    let isSearching = false;
+    let glSearchTimeout;
+
+    document.getElementById('gl_global_search').addEventListener('input', function () {
+
+        clearTimeout(glSearchTimeout);
+
+        const query = this.value.trim();
+        const container = document.getElementById('gl_options_list');
+
+        // ✅ If cleared → go back to category
+        if (query.length < 2) {
+            loadGLCodesByCategory();
+            return;
+        }
+
+        glSearchTimeout = setTimeout(async () => {
+
+            const res = await fetch('index.php?api=gl-search', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ query })
+            });
+
+            const data = await res.json();
+
+            // 🔥 Replace ONLY dropdown view (not selected items)
+            container.innerHTML = '';
+
+            data.data.forEach(gl => {
+
+                const alreadySelected = document.querySelector(
+                    `#hidden_gl_inputs input[value="${gl.id}"]`
+                );
+
+                const div = document.createElement('div');
+                div.className = "px-3 py-2 flex gap-2";
+
+                div.innerHTML = `
+                    <input type="checkbox"
+                        class="gl-checkbox"
+                        value="${gl.id}"
+                        data-id="${gl.id}"
+                        data-code="${gl.gl_account}"
+                        data-title="${gl.account_title}"
+                        ${alreadySelected ? 'checked' : ''}
+                        onchange="updateGlTags()">
+                    <span>${gl.gl_account} - ${gl.account_title}</span>
+                `;
+
+                container.appendChild(div);
+            });
+
+        }, 300);
+    });
+
+
+    document.getElementById('gl_global_search').addEventListener('focus', function () {
+        document.getElementById('gl_options_list').innerHTML = '';
+    });
+
+
+
+    function handleGlClick() {
+
+        const query = document.getElementById('gl_global_search').value.trim();
+
+        // ✅ If not searching → show category GL codes
+        if (query.length < 2) {
+            loadGLCodesByCategory();
+        }
+
+        toggleGlDropdown(true);
+    }
+
 </script>

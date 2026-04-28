@@ -30,9 +30,10 @@ switch ($action) {
         (new LedgerController())->upload();
         break;
 
-    case 'check':
-        (new LedgerController())->check();
-        break;
+    /**case 'check':
+    *   (new LedgerController())->check();
+    *  break;
+    */
 
     case 'preview':
         (new LedgerController())->preview();
@@ -43,15 +44,15 @@ switch ($action) {
         break;
 
     case 'report-partner':
-    require_once __DIR__ . '/../app/Controllers/ReportController.php';
-    (new ReportController())->partnerReport();
-    break;
+        require_once __DIR__ . '/../app/Controllers/ReportController.php';
+        (new ReportController())->partnerReport();
+        break;
 
     case 'partners':
-    require_once __DIR__ . '/../app/Controllers/ReportController.php';
-    $controller = new ReportController();
-    $controller->getPartners();
-    break;
+        require_once __DIR__ . '/../app/Controllers/ReportController.php';
+        $controller = new ReportController();
+        $controller->getPartners();
+        break;
 
     /**
      * =========================
@@ -69,6 +70,31 @@ switch ($action) {
 
     case 'gl-insert':
         (new GLCodeController())->insert();
+        break;
+
+    case 'gl-codes':
+        (new GLCodeController())->getAll();
+        break;
+
+    case 'gl-toggle-status':
+        (new GLCodeController())->toggleStatus();
+        break;
+
+    case 'gl-level4':
+        (new GLCodeController())->getLevel4();
+        break;
+
+    case 'gl-by-category':
+        (new GLCodeController())->getByCategories();
+        break;
+
+    case 'create-user':
+        require_once __DIR__ . '/../app/Controllers/UserController.php';
+        (new UserController())->create();
+        break;
+
+    case 'gl-search':
+        (new GLCodeController())->search();
         break;
 
     default:

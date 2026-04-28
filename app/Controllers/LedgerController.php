@@ -18,12 +18,7 @@ class LedgerController extends Controller
         return $this->json($this->service->extractMultipleExcel($_FILES['files'] ?? null));
     }
 
-    // BATCH CHECK
-    public function check()
-    {
-        return $this->json($this->service->checkDuplicatesBatch($_POST));
-    }
-
+    
     // BATCH INSERT
     public function insert()
     {
