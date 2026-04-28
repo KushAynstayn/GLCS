@@ -38,7 +38,20 @@ class AuthController {
             return;
         }
 
-        $_SESSION['user'] = $user;
+        // ✅ FETCH ROLE NAME
+        $db = Database::getInstance()->getConnection();
+
+        $stmt = $db->prepare("SELECT name FROM roles WHERE id = ?");
+        $stmt->execute([$user['role_id']]);
+        $role = $stmt->fetch();
+
+        // ✅ CLEAN SESSION STRUCTURE
+        $_SESSION['user'] = [
+            'id' => $user['id'],
+            'username' => $user['username'],
+            'role_id' => $user['role_id'],
+            'role_name' => $role['name'] ?? 'User'
+        ];
 
         echo json_encode([
             'ok' => true,

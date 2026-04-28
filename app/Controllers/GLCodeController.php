@@ -44,4 +44,56 @@ class GLCodeController extends Controller
             $this->service->insertBatch($input)
         );
     }
+
+
+    public function getAll()
+    {
+        $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+
+        if ($page < 1) $page = 1;
+
+        return $this->json(
+            $this->service->getAllGLCodes($page, 50)
+        );
+    }
+
+    public function toggleStatus()
+    {
+        $input = json_decode(file_get_contents("php://input"), true);
+
+        return $this->json(
+            $this->service->updateStatus(
+                $input['gl_account'],
+                $input['status']
+            )
+        );
+    }
+
+
+    public function getLevel4()
+    {
+        return $this->json(
+            $this->service->getLevel4Categories()
+        );
+    }
+
+    public function getByCategories()
+    {
+        $input = json_decode(file_get_contents("php://input"), true);
+
+        return $this->json(
+            $this->service->getGLCodesByCategories($input['categories'] ?? [])
+        );
+    }
+
+
+    public function search()
+    {
+        $input = json_decode(file_get_contents("php://input"), true);
+
+        return $this->json(
+            $this->service->searchGLCodes($input['query'] ?? '')
+        );
+    }
+
 }
