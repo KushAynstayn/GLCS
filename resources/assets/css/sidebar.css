@@ -1,6 +1,5 @@
 .sidebar-bg {
     background-color: #a61e22;
-    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .nav-item {
@@ -15,9 +14,18 @@
 }
 
 .nav-active {
-    background-color: white !important;
+    /* Set base color and styling */
+    background-color: #f3f4f6 !important;
     color: #a61e22 !important;
     font-weight: bold;
+    
+    /* These lines force the highlight to reach the right side */
+    width: calc(100% + 15px) !important;
+    margin-right: -15px !important;
+
+    /* Forces the right side to be sharp by overriding other styles */
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
 }
 
 /* For rotating the chevron icon */
