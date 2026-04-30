@@ -2,22 +2,22 @@
 // reports_overall.php
 ?>
 
-<div class="w-full mx-auto mb-16">
+<div class="w-full mx-auto mb-4">
     <h1 class="text-3xl font-extrabold text-[#a61e22] tracking-tight">
         Overall Reports
     </h1>
 
-    <p class="text-gray-500 mb-6 text-sm">
+    <p class="text-gray-500 mb-2 text-sm">
         View a comprehensive summary of total records by partner and GL code.
     </p>
 
-    <div class="flex items-center justify-between mb-8">
+    <div class="flex items-center justify-between mb-4">
         <button type="button"
-            class="px-6 py-3 text-xs font-bold uppercase tracking-wider text-red-700 bg-red-50 border border-red-100 rounded-lg hover:bg-red-600 hover:text-white transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1 flex items-center gap-3">
+            class="px-4 py-2 text-xs font-bold uppercase tracking-wider text-red-700 bg-red-50 border border-red-100 rounded-lg hover:bg-red-600 hover:text-white transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1 flex items-center gap-3">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
             </svg>
-            <div class="flex flex-col items-start">
+            <div class="flex flex-col items-start leading-tight">
                 <span>Download</span>
                 <span class="text-[9px] opacity-75">Export Data</span>
             </div>
@@ -27,42 +27,42 @@
             <div class="flex items-center gap-2">
                 <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap">Search</label>
                 <input type="text" id="searchInput" placeholder="Search by partner or GL code..." 
-                    class="px-4 py-2 text-xs border border-gray-200 rounded-lg text-gray-600 focus:outline-none focus:ring-1 focus:ring-[#D50000] w-64 transition-all">
+                    class="px-4 py-1.5 text-xs border border-gray-200 rounded-lg text-gray-600 focus:outline-none focus:ring-1 focus:ring-[#D50000] w-64 transition-all">
             </div>
         </div>
     </div>
 
     <div class="border border-gray-100 rounded-xl bg-white shadow-sm overflow-hidden">
-        <div class="overflow-x-auto thin-scrollbar border border-gray-100 rounded-xl shadow-sm">
+        <div class="overflow-x-auto thin-scrollbar">
             <table class="w-full text-center text-[11px] text-gray-700 border-collapse whitespace-nowrap">
                 <thead class="bg-[#D50000] text-white sticky top-0 z-30">
                     <tr class="uppercase tracking-wider">
-                        <th class="px-4 py-3 font-bold border-b border-[#8e191d]">Partner</th>
-                        <th class="px-4 py-3 font-bold border-b border-[#8e191d]">GL Code</th>
-                        <th class="px-4 py-3 font-bold border-b border-[#8e191d]">Amount</th>
+                        <th class="px-4 py-1.5 font-bold border-b border-[#8e191d]">Partner</th>
+                        <th class="px-4 py-1.5 font-bold border-b border-[#8e191d]">GL Code</th>
+                        <th class="px-4 py-1.5 font-bold border-b border-[#8e191d]">Amount</th>
                     </tr>
                 </thead>
                 <tbody id="reportTableBody" class="divide-y divide-gray-100">
                     <tr>
-                        <td colspan="3" class="p-12 text-center text-gray-400 italic font-medium">
+                        <td colspan="3" class="p-8 text-center text-gray-400 italic font-medium">
                             No data yet.
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
-    </div>
 
-    <div class="flex items-center justify-center gap-4 py-4 border-t border-gray-100 bg-gray-50/50">
-        <button id="btn-prev" onclick="prevPage()"
-            class="px-4 py-1.5 text-[11px] font-bold border border-gray-300 text-gray-600 rounded uppercase tracking-wider hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
-            Prev
-        </button>
-        <span id="pageInfo" class="text-[11px] font-bold text-gray-500 uppercase tracking-widest">1 / 1</span>
-        <button id="btn-next" onclick="nextPage()"
-            class="px-4 py-1.5 text-[11px] font-bold border border-gray-300 text-gray-600 rounded uppercase tracking-wider hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
-            Next
-        </button>
+        <div class="flex items-center justify-center gap-4 py-2 border-t border-gray-100 bg-gray-50/50">
+            <button id="btn-prev" onclick="prevPage()"
+                class="px-4 py-1 text-[11px] font-bold border border-gray-300 text-gray-600 rounded uppercase tracking-wider hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                Prev
+            </button>
+            <span id="pageInfo" class="text-[11px] font-bold text-gray-500 uppercase tracking-widest">1 / 1</span>
+            <button id="btn-next" onclick="nextPage()"
+                class="px-4 py-1 text-[11px] font-bold border border-gray-300 text-gray-600 rounded uppercase tracking-wider hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                Next
+            </button>
+        </div>
     </div>
 </div>
 
@@ -108,9 +108,9 @@
 
         tbody.innerHTML = rows.map(row => `
             <tr class="hover:bg-red-50 transition-colors duration-150">
-                <td class="px-4 py-3 font-medium">${row.partner ?? ''}</td>
-                <td class="px-4 py-3 font-medium">${row.gl_code ?? ''}</td>
-                <td class="px-4 py-3 font-medium">${row.amount ?? ''}</td>
+                <td class="px-4 py-1.5 font-medium">${row.partner ?? ''}</td>
+                <td class="px-4 py-1.5 font-medium">${row.gl_code ?? ''}</td>
+                <td class="px-4 py-1.5 font-medium">${row.amount ?? ''}</td>
             </tr>
         `).join('');
 
