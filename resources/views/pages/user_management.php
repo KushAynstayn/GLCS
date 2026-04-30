@@ -1,4 +1,4 @@
-<div class="max-w-7xl mx-auto mb-16">
+<div class="w-full mx-auto mb-16">
     <h1 class="text-3xl font-extrabold text-[#a61e22] tracking-tight">User Management</h1>
     <p class="text-gray-500 mb-6 text-sm">Manage user accounts and statuses</p>
 
@@ -34,59 +34,78 @@
     <?php include __DIR__ . '/../components/modals/reset-password_modal.php'; ?>
     <?php include __DIR__ . '/../components/modals/success_modal.php'; ?>
 
-    <div class="border border-gray-100 rounded-xl bg-white shadow-sm overflow-hidden">
-        <table class="w-full text-left text-[10px] text-gray-600 border-collapse">
-            <thead class="bg-[#D50000] border-b border-[#8e191d]">
-                <tr class="text-white uppercase tracking-wider">
-                    <th class="px-2 py-3 font-semibold">No.</th>
-                    <th class="px-2 py-3 font-semibold">ID Number</th>
-                    <th class="px-2 py-3 font-semibold">Username</th>
-                    <th class="px-2 py-3 font-semibold">First Name</th>
-                    <th class="px-2 py-3 font-semibold">Middle Name</th>
-                    <th class="px-2 py-3 font-semibold">Last Name</th>
-                    <th class="px-2 py-3 font-semibold">Last Online</th>
-                    <th class="px-2 py-3 font-semibold">Date Modified</th>
-                    <th class="px-2 py-3 font-semibold">Role</th>
-                    <th class="px-2 py-3 font-semibold">Status</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-50">
-
-                <?php if (!empty($users)): ?>
-                    <?php foreach ($users as $index => $user): ?>
-                        <tr onclick="openModal('userman')" class="cursor-pointer hover:bg-red-50/50 transition-colors">
-
-                            <td class="px-2 py-3"><?= $index + 1 ?></td>
-                            <td class="px-2 py-3"><?= htmlspecialchars($user['id']) ?></td>
-                            <td class="px-2 py-3"><?= htmlspecialchars($user['username']) ?></td>
-                            <td class="px-2 py-3"><?= htmlspecialchars($user['first_name'] ?? '') ?></td>
-                            <td class="px-2 py-3"><?= htmlspecialchars($user['middle_name'] ?? '') ?></td>
-                            <td class="px-2 py-3"><?= htmlspecialchars($user['last_name'] ?? '') ?></td>
-                            <td class="px-2 py-3"><?= htmlspecialchars($user['last_online'] ?? '') ?></td>
-                            <td class="px-2 py-3"><?= htmlspecialchars($user['updated_at'] ?? '') ?></td>
-                            <td class="px-2 py-3"><?= htmlspecialchars($user['role_name'] ?? 'User') ?></td>
-                            <td class="px-2 py-3"><?= htmlspecialchars($user['status'] ?? 'Active') ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <tr>
-                        <td colspan="10" class="text-center py-4 text-gray-400">
-                            No users found
-                        </td>
+    <div class="border border-gray-100 rounded-xl bg-white shadow-sm overflow-hidden flex flex-col">
+        <!-- Scrollable Container with Fluid feel -->
+        <div class="overflow-auto scrollbar-hide max-h-[468px]">
+            <table class="w-full min-w-max text-center text-[11px] text-gray-700 border-collapse whitespace-nowrap">
+                <thead class="bg-[#D50000] text-white sticky top-0 z-30 shadow-sm">
+                    <tr class="uppercase tracking-wider">
+                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">No.</th>
+                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">ID Number</th>
+                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">Username</th>
+                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">First Name</th>
+                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">Middle Name</th>
+                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">Last Name</th>
+                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">Last Online</th>
+                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">Date Modified</th>
+                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">Role</th>
+                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">Status</th>
                     </tr>
-                <?php endif; ?>
+                </thead>
+                <tbody id="userTableBody" class="divide-y divide-gray-100 bg-white">
+                    <?php if (!empty($users)): ?>
+                        <?php foreach ($users as $index => $user): ?>
+                            <tr onclick="openModal('userman')" 
+                                class="group relative row-fluid-transition cursor-pointer border-b border-gray-100 bg-white hover:bg-red-100/60">
+                                
+                                <!-- Column 1: Number + Piano Key Accent -->
+                                <td class="px-6 py-3 font-bold relative group-hover:translate-x-1 transition-transform duration-300">
+                                    <!-- The Piano Key Indicator -->
+                                    <div class="absolute left-0 top-0 bottom-0 w-[4px] bg-[#D50000] scale-y-0 group-hover:scale-y-100 transition-transform duration-300 origin-center"></div>
+                                    <?= $index + 1 ?>
+                                </td>
 
-            </tbody>
-        </table>
+                                <td class="px-6 py-3"><?= htmlspecialchars($user['id']) ?></td>
+                                <td class="px-6 py-3 font-bold text-gray-800"><?= htmlspecialchars($user['username']) ?></td>
+                                <td class="px-6 py-3"><?= htmlspecialchars($user['first_name'] ?? '') ?></td>
+                                <td class="px-6 py-3"><?= htmlspecialchars($user['middle_name'] ?? '') ?></td>
+                                <td class="px-6 py-3"><?= htmlspecialchars($user['last_name'] ?? '') ?></td>
+                                <td class="px-6 py-3 italic text-gray-500"><?= htmlspecialchars($user['last_online'] ?? '') ?></td>
+                                <td class="px-6 py-3"><?= htmlspecialchars($user['updated_at'] ?? '') ?></td>
+                                
+                                <td class="px-6 py-3">
+                                    <span class="px-2 py-1 bg-gray-100 rounded text-[9px] font-bold uppercase tracking-tighter group-hover:bg-white transition-colors">
+                                        <?= htmlspecialchars($user['role_name'] ?? 'User') ?>
+                                    </span>
+                                </td>
 
-        <div class="flex items-center justify-center gap-4 py-3 border-t border-gray-100 bg-gray-50/50">
-            <button class="px-3 py-1 text-[10px] font-semibold text-gray-600 bg-white border border-gray-200 rounded hover:border-red-200 hover:text-red-600 transition-colors shadow-sm uppercase tracking-wider">
+                                <td class="px-6 py-3">
+                                    <span class="text-[10px] font-bold uppercase transition-colors duration-300 group-hover:text-red-700 <?= ($user['status'] ?? 'Active') === 'Active' ? 'text-green-600' : 'text-gray-400' ?>">
+                                        <?= htmlspecialchars($user['status'] ?? 'Active') ?>
+                                    </span>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="10" class="p-12 text-center text-gray-400 italic font-medium">
+                                No users found.
+                            </td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination Footer -->
+        <div class="flex h-[45px] items-center justify-center gap-4 py-4 border-t border-gray-100 bg-gray-50/50">
+            <button class="px-4 py-1.5 text-[11px] font-bold border border-gray-300 text-gray-600 rounded uppercase tracking-wider hover:bg-gray-200 disabled:opacity-50 transition-colors">
                 Prev
             </button>
-            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+            <span class="text-[11px] font-bold text-gray-500 uppercase tracking-widest">
                 1 / 1
             </span>
-            <button class="px-3 py-1 text-[10px] font-semibold text-gray-600 bg-white border border-gray-200 rounded hover:border-red-200 hover:text-red-600 transition-colors shadow-sm uppercase tracking-wider">
+            <button class="px-4 py-1.5 text-[11px] font-bold border border-gray-300 text-gray-600 rounded uppercase tracking-wider hover:bg-gray-200 disabled:opacity-50 transition-colors">
                 Next
             </button>
         </div>
@@ -115,4 +134,21 @@
         0% { opacity: 0; transform: scale(0.95); }
         100% { opacity: 1; transform: scale(1); }
     }
+
+
+    /* This hides the scrollbar across all browsers while keeping scroll functionality */
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+    .scrollbar-hide {
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+    }
+
+
+    /* Custom fluid transition */
+    .row-fluid-transition {
+        transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
 </style>

@@ -16,13 +16,13 @@
         <div class="p-6 space-y-4 pt-5">
             <div class="space-y-3">
                 <div class="grid grid-cols-2 gap-4">
-                    <select class="border border-gray-300 rounded-lg p-2.5 text-sm w-full outline-none focus:ring-1 focus:ring-red-500"><option>Select Main Zone</option></select>
-                    <select class="border border-gray-300 rounded-lg p-2.5 text-sm w-full outline-none focus:ring-1 focus:ring-red-500"><option>Select Zone</option></select>
+                    <select id="mainZone" class="border border-gray-300 rounded-lg p-2.5 text-sm w-full outline-none focus:ring-1 focus:ring-red-500"><option value="">Select Main Zone</option></select>
+                    <select id="zone" class="border border-gray-300 rounded-lg p-2.5 text-sm w-full outline-none focus:ring-1 focus:ring-red-500"><option value="">Select Zone</option></select>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
-                    <select class="border border-gray-300 rounded-lg p-2.5 text-sm w-full outline-none focus:ring-1 focus:ring-red-500"><option>Select Region</option></select>
-                    <select class="border border-gray-300 rounded-lg p-2.5 text-sm w-full outline-none focus:ring-1 focus:ring-red-500"><option>Select Area</option></select>
+                    <select id="region" class="border border-gray-300 rounded-lg p-2.5 text-sm w-full outline-none focus:ring-1 focus:ring-red-500"><option value="">Select Region</option></select>
+                    <select id="area" class="border border-gray-300 rounded-lg p-2.5 text-sm w-full outline-none focus:ring-1 focus:ring-red-500"><option value="">Select Area</option></select>
                 </div>
             </div>
 
@@ -40,21 +40,23 @@
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">GL Account</h3>
-                    <input type="text" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-1 focus:ring-red-500 outline-none transition-all" placeholder="Search or pick GL Code...">
+                    <input id="glInput" list="gl_list" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-1 focus:ring-red-500 outline-none transition-all" placeholder="Search or pick GL Code...">
+                    <datalist id="gl_list"></datalist>
                 </div>
                 <div>
                     <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Partner Details</h3>
-                    <input id="partnerInput" type="text" list="partner_list" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-1 focus:ring-red-500 outline-none transition-all" placeholder="Type partner name...">
+                    <input id="partnerInput" list="partner_list" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-1 focus:ring-red-500 outline-none transition-all" placeholder="Search Partner...">
                     <datalist id="partner_list"></datalist>
                 </div>
             </div>
         </div>
 
         <div class="flex gap-3 justify-end p-6 mt-2 border-t border-gray-100">
-            <button onclick="closeModal('zone')" class="px-6 py-2 text-xs font-bold uppercase tracking-wider text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all">
+            <button onclick="cancelFilters()" class="px-6 py-2 text-xs font-bold uppercase tracking-wider text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all">
                 Cancel
             </button>
-            <button class="px-6 py-2 text-xs font-bold uppercase tracking-wider text-white bg-[#D50000] rounded-lg hover:bg-red-700 shadow-md hover:shadow-lg transition-all">
+            <button onclick="applyFilters()" 
+            class="px-6 py-2 text-xs font-bold uppercase tracking-wider text-white bg-[#D50000] rounded-lg">
                 Search
             </button>
         </div>

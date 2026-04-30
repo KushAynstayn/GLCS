@@ -4,7 +4,7 @@
 <?php include __DIR__ . '/../components/modals/insert_modal.php'; ?>
 
 
-<div class="max-w-7xl mx-auto mb-16">
+<div class="w-full mx-auto mb-16">
     <h1 class="text-3xl font-extrabold text-[#a61e22] tracking-tight">
         General Ledger Extraction Import
     </h1>
