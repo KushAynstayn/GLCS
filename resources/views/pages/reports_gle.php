@@ -2,36 +2,36 @@
 // reports_gle.php
 ?>
 
-<div class="w-full mx-auto mb-16">
+<div class="w-full mx-auto mb-4">
     <h1 class="text-3xl font-extrabold text-[#a61e22] tracking-tight">
         General Ledger Extraction Report
     </h1>
 
-    <p class="text-gray-500 mb-6 text-sm">
+    <p class="text-gray-500 mb-2 text-sm">
         Filter by organization hierarchy, GL codes, or partner names to view detailed extraction records.
     </p>
 
-    <div class="flex items-center justify-between mb-8">
+    <div class="flex items-center justify-between mb-4">
         <div class="flex gap-3">
 
             <button onclick="openModal('zone')" id="btn-zone"
-                class="px-6 py-3 text-xs font-bold uppercase tracking-wider text-red-700 bg-red-50 border border-red-100 rounded-lg hover:bg-red-600 hover:text-white transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1 flex items-center gap-3">
+                class="px-4 py-2 text-xs font-bold uppercase tracking-wider text-red-700 bg-red-50 border border-red-100 rounded-lg hover:bg-red-600 hover:text-white transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1 flex items-center gap-3">
 
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                 </svg>
 
-                <div class="flex flex-col items-start">
+                <div class="flex flex-col items-start leading-tight">
                     <span>Filter</span>
                     <span class="text-[9px] opacity-75">Search Data</span>
                 </div>
             </button>
 
-            <button class="px-6 py-3 text-xs font-bold uppercase tracking-wider text-red-700 bg-red-50 border border-red-100 rounded-lg hover:bg-red-600 hover:text-white transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1 flex items-center gap-3">
+            <button class="px-4 py-2 text-xs font-bold uppercase tracking-wider text-red-700 bg-red-50 border border-red-100 rounded-lg hover:bg-red-600 hover:text-white transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1 flex items-center gap-3">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                 </svg>
-                <div class="flex flex-col items-start">
+                <div class="flex flex-col items-start leading-tight">
                     <span>Download</span>
                     <span class="text-[9px] opacity-75">Export Data</span>
                 </div>
@@ -43,28 +43,28 @@
 
     <div class="border border-gray-100 rounded-xl bg-white shadow-sm overflow-hidden flex flex-col">
 
-        <div class="overflow-auto scrollbar-hide max-h-[468px]">
+        <div class="overflow-auto scrollbar-hide max-h-[500px]">
             <table class="w-full min-w-max text-center text-[11px] text-gray-700 border-collapse whitespace-nowrap">
                 <thead class="bg-[#D50000] text-white sticky top-0 z-30 shadow-sm">
                     <tr class="uppercase tracking-wider">
-                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">Date Time</th>
-                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">GL Code</th>
-                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">GL Description</th>
-                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">Description</th>
-                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">Reference</th>
-                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">Entry Number</th>
-                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">Currency</th>
-                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">Debit</th>
-                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">Credit</th>
-                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">Transaction Type</th>
-                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">Cost Center</th>
-                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">Item</th>
+                        <th class="px-6 py-1 font-bold border-b border-[#8e191d]">Date Time</th>
+                        <th class="px-6 py-1 font-bold border-b border-[#8e191d]">GL Code</th>
+                        <th class="px-6 py-1 font-bold border-b border-[#8e191d]">GL Description</th>
+                        <th class="px-6 py-1 font-bold border-b border-[#8e191d]">Description</th>
+                        <th class="px-6 py-1 font-bold border-b border-[#8e191d]">Reference</th>
+                        <th class="px-6 py-1 font-bold border-b border-[#8e191d]">Entry Number</th>
+                        <th class="px-6 py-1 font-bold border-b border-[#8e191d]">Currency</th>
+                        <th class="px-6 py-1 font-bold border-b border-[#8e191d]">Debit</th>
+                        <th class="px-6 py-1 font-bold border-b border-[#8e191d]">Credit</th>
+                        <th class="px-6 py-1 font-bold border-b border-[#8e191d]">Transaction Type</th>
+                        <th class="px-6 py-1 font-bold border-b border-[#8e191d]">Cost Center</th>
+                        <th class="px-6 py-1 font-bold border-b border-[#8e191d]">Item</th>
                     </tr>
                 </thead>
 
                 <tbody id="reportTableBody" class="divide-y divide-gray-100 bg-white">
                     <tr>
-                        <td colspan="13" class="p-12 text-center text-gray-400 italic font-medium">
+                        <td colspan="13" class="p-8 text-center text-gray-400 italic font-medium">
                             No data yet.
                         </td>
                     </tr>
@@ -72,9 +72,9 @@
             </table>
         </div>
 
-        <div class="flex h-[45px] items-center justify-center gap-4 py-4 border-t border-gray-100 bg-gray-50/50">
+        <div class="flex h-[40px] items-center justify-center gap-4 py-2 border-t border-gray-100 bg-gray-50/50">
             <button id="btn-prev" onclick="prevPage()"
-                class="px-4 py-1.5 text-[11px] font-bold border border-gray-300 text-gray-600 rounded uppercase tracking-wider hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                class="px-4 py-1 text-[11px] font-bold border border-gray-300 text-gray-600 rounded uppercase tracking-wider hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
                 Prev
             </button>
 
@@ -83,7 +83,7 @@
             </span>
 
             <button id="btn-next" onclick="nextPage()"
-                class="px-4 py-1.5 text-[11px] font-bold border border-gray-300 text-gray-600 rounded uppercase tracking-wider hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                class="px-4 py-1 text-[11px] font-bold border border-gray-300 text-gray-600 rounded uppercase tracking-wider hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
                 Next
             </button>
         </div>
@@ -227,20 +227,20 @@
 
         tbody.innerHTML = rows.map(row => `
             <tr class="group row-fluid-transition border-b border-gray-100 bg-white hover:bg-gradient-to-r hover:bg-red-100/50 hover:to-transparent">
-                <td class="px-6 py-2 text-[11px] font-bold border-l-4 border-transparent group-hover:border-[#D50000] transition-all duration-300">
+                <td class="px-6 py-1 text-[11px] font-bold border-l-4 border-transparent group-hover:border-[#D50000] transition-all duration-300">
                     ${formatDate(row.datetime)}
                 </td>
-                <td class="px-6 py-3 font-bold group-hover:translate-x-1 transition-transform duration-300">${row.gl_code ?? ''}</td>
-                <td class="px-6 py-3 font-bold">${row.gl_desc ?? ''}</td>
-                <td class="px-6 py-3 font-bold">${row.desc ?? ''}</td>
-                <td class="px-6 py-3 font-bold">${row.reference ?? ''}</td>
-                <td class="px-6 py-3 font-bold">${row.entry_number ?? ''}</td>
-                <td class="px-6 py-3 font-bold">${row.currency ?? ''}</td>
-                <td class="px-6 py-3 font-bold group-hover:text-[#D50000] transition-colors">${row.debit ?? ''}</td>
-                <td class="px-6 py-3 font-bold group-hover:text-[#D50000] transition-colors">${row.credit ?? ''}</td>
-                <td class="px-6 py-3 font-bold">${row.transaction_type ?? ''}</td>
-                <td class="px-6 py-3 font-bold">${row.cost_center ?? ''}</td>
-                <td class="px-6 py-3 font-bold">${row.item ?? ''}</td>
+                <td class="px-6 py-1 font-bold group-hover:translate-x-1 transition-transform duration-300">${row.gl_code ?? ''}</td>
+                <td class="px-6 py-1 font-bold">${row.gl_desc ?? ''}</td>
+                <td class="px-6 py-1 font-bold">${row.desc ?? ''}</td>
+                <td class="px-6 py-1 font-bold">${row.reference ?? ''}</td>
+                <td class="px-6 py-1 font-bold">${row.entry_number ?? ''}</td>
+                <td class="px-6 py-1 font-bold">${row.currency ?? ''}</td>
+                <td class="px-6 py-1 font-bold group-hover:text-[#D50000] transition-colors">${row.debit ?? ''}</td>
+                <td class="px-6 py-1 font-bold group-hover:text-[#D50000] transition-colors">${row.credit ?? ''}</td>
+                <td class="px-6 py-1 font-bold">${row.transaction_type ?? ''}</td>
+                <td class="px-6 py-1 font-bold">${row.cost_center ?? ''}</td>
+                <td class="px-6 py-1 font-bold">${row.item ?? ''}</td>
             </tr>
         `).join('');
 

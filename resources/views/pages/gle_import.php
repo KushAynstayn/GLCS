@@ -1,14 +1,12 @@
-
 <?php include __DIR__ . '/../components/modals/fetch_modal.php'; ?>
 <?php include __DIR__ . '/../components/modals/preview_modal.php'; ?>
 <?php include __DIR__ . '/../components/modals/insert_modal.php'; ?>
 
-
-<div class="w-full mx-auto mb-16">
+<div class="w-full mx-auto mb-4">
     <h1 class="text-3xl font-extrabold text-[#a61e22] tracking-tight">
         General Ledger Extraction Import
     </h1>
-    <p class="text-gray-500 mb-6">
+    <p class="text-gray-500 mb-2 text-sm">
         Upload, preview, and import multiple Excel files efficiently.
     </p>
 
@@ -17,7 +15,7 @@
 
     <!-- DROPZONE -->
     <div id="dropZone"
-        class="border-2 border-dashed border-[#DDEAF2] rounded-xl bg-[#F8FAFC]/50 py-12 flex flex-col items-center justify-center text-center px-6 cursor-pointer hover:border-[#EF4444] hover:bg-white transition"
+        class="border-2 border-dashed border-[#DDEAF2] rounded-xl bg-[#F8FAFC]/50 py-6 flex flex-col items-center justify-center text-center px-6 cursor-pointer hover:border-[#EF4444] hover:bg-white transition"
         onclick="document.getElementById('fileInput').click()">
 
         <p class="text-xl font-bold text-[#0D2149]">Drag & Drop Files Here</p>
@@ -25,21 +23,21 @@
     </div>
 
     <!-- FILE LIST -->
-    <div id="fileListContainer" class="mt-6 hidden">
-        <div class="flex justify-between mb-3">
-            <h2 id="fileCount" class="font-bold text-lg text-[#0D2149]">Files: 0</h2>
+    <div id="fileListContainer" class="mt-4 hidden">
+        <div class="flex justify-between items-center mb-2">
+            <h2 id="fileCount" class="font-bold text-md text-[#0D2149]">Files: 0</h2>
 
             <button onclick="uploadFiles()"
-                class="bg-[#D50000] text-white px-4 py-2 rounded-lg text-sm">
+                class="bg-[#D50000] text-white px-4 py-1.5 rounded-lg text-sm font-semibold">
                 Upload & Preview
             </button>
         </div>
 
-        <div id="fileListRows" class="space-y-2"></div>
+        <div id="fileListRows" class="space-y-1"></div>
     </div>
 
     <!-- PREVIEW AREA -->
-    <div id="previewContainer" class="mt-8"></div>
+    <div id="previewContainer" class="mt-4"></div>
 </div>
 
 
@@ -84,14 +82,14 @@ function renderFileList() {
 
     allFiles.forEach((file, i) => {
         let row = document.createElement('div');
-        row.className = "bg-white p-3 rounded border flex justify-between";
+        row.className = "bg-white p-2 rounded border flex justify-between items-center";
 
         row.innerHTML = `
-            <div>
-                <p class="font-medium">${file.name}</p>
-                <p class="text-xs text-gray-400">${(file.size / 1024).toFixed(2)} KB</p>
+            <div class="leading-tight">
+                <p class="font-medium text-sm">${file.name}</p>
+                <p class="text-[10px] text-gray-400">${(file.size / 1024).toFixed(2)} KB</p>
             </div>
-            <button onclick="removeFile(${i})" class="text-red-500">Remove</button>
+            <button onclick="removeFile(${i})" class="text-red-500 text-xs font-bold hover:underline">Remove</button>
         `;
 
         fileListRows.appendChild(row);
@@ -169,14 +167,14 @@ function renderPreview() {
     uploadedFileKeys.forEach((key, index) => {
 
         let card = document.createElement("div");
-        card.className = "border rounded p-4 mb-4 bg-white";
+        card.className = "border rounded p-3 mb-2 bg-white";
 
         card.innerHTML = `
-            <h3 class="font-bold text-[#a61e22] mb-2">
+            <h3 class="font-bold text-[#a61e22] text-sm mb-1">
                 File ${index + 1}: ${key}
             </h3>
 
-            <p class="text-sm text-gray-500">
+            <p class="text-xs text-gray-500">
                 Preview loaded from backend (first rows stored in JSON)
             </p>
         `;
@@ -224,22 +222,22 @@ function renderPreviewModal() {
     uploadedFilesData.forEach((file, index) => {
 
         let tableHTML = `
-            <div class="border rounded p-4">
-                <h3 class="font-bold text-[#a61e22] mb-2">
+            <div class="border rounded p-3 mb-4">
+                <h3 class="font-bold text-[#a61e22] mb-1 text-sm">
                     File ${index + 1}: ${file.file_key}
                 </h3>
 
                 <div class="overflow-auto">
-                    <table class="min-w-full text-sm border">
+                    <table class="min-w-full text-[11px] border leading-tight">
                         <thead class="bg-gray-100">
                             <tr>
-                                ${Object.keys(file.preview[0] || {}).map(h => `<th class="p-2 border">${h}</th>`).join('')}
+                                ${Object.keys(file.preview[0] || {}).map(h => `<th class="p-1 border font-bold">${h}</th>`).join('')}
                             </tr>
                         </thead>
                         <tbody>
                             ${file.preview.map(row => `
                                 <tr>
-                                    ${Object.values(row).map(v => `<td class="p-2 border">${v ?? ''}</td>`).join('')}
+                                    ${Object.values(row).map(v => `<td class="p-1 border">${v ?? ''}</td>`).join('')}
                                 </tr>
                             `).join('')}
                         </tbody>
