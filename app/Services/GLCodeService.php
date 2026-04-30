@@ -27,7 +27,7 @@ class GLCodeService extends BaseImportService
     // =========================================
     // FETCH ALL GL CODES
     // =========================================
-    public function getAllGLCodes($page = 1, $limit = 50)
+    public function getAllGLCodes($page = 1, $limit = 20)
     {
         $offset = ($page - 1) * $limit;
 

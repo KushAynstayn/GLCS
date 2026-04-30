@@ -254,8 +254,14 @@ abstract class BaseImportService
     protected function normalizeHeaders($headers)
     {
         return array_map(function ($h) {
+
             $h = strtolower(trim($h));
-            return preg_replace('/[^a-z0-9]/', '_', $h);
+            $h = preg_replace('/\s+/', '_', $h);       // spaces → underscore
+            $h = preg_replace('/[^a-z0-9_]/', '', $h); // remove junk chars
+            $h = preg_replace('/_+/', '_', $h);        // collapse multiple underscores
+
+            return $h;
+
         }, $headers);
     }
 

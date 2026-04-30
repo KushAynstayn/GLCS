@@ -2,7 +2,7 @@
 // gl_code_settings.php
 ?>
 
-<div class="max-w-7xl mx-auto mb-16">
+<div class="w-full mx-auto mb-16">
     <h1 class="text-3xl font-extrabold text-[#a61e22] tracking-tight">GL Settings</h1>
     <p class="text-gray-500 mb-6 text-sm">Configure and manage General Ledger accounts, hierarchies, and structures.</p>
 
@@ -47,35 +47,45 @@
     <?php include __DIR__ . '/../components/modals/preview_modal.php'; ?>
     <?php include __DIR__ . '/../components/modals/insert_modal.php'; ?>
 
-    <div class="border border-gray-100 rounded-xl bg-white shadow-sm overflow-hidden">
-        <table class="w-full text-left text-[10px] text-gray-600 border-collapse">
-            <thead class="bg-[#D50000] border-b border-[#8e191d]">
-                <tr class="text-white uppercase tracking-wider">
-                    <th class="px-2 py-3 font-semibold">GL Account</th>
-                    <th class="px-2 py-3 font-semibold">Account Title</th>
-                    <th class="px-2 py-3 font-semibold">Level 4</th>
-                    <th class="px-2 py-3 font-semibold">Level 3</th>
-                    <th class="px-2 py-3 font-semibold">Level 2</th>
-                    <th class="px-2 py-3 font-semibold">Level 1</th>
-                    <th class="px-2 py-3 font-semibold">FS Account Type</th>
-                    <th class="px-2 py-3 font-semibold">Normal Balance</th>
-                    <th class="px-2 py-3 font-semibold text-center">Status</th>
-                </tr>
-            </thead>
-            <tbody id="glTableBody" class="divide-y divide-gray-50">
-            </tbody>
-        </table>
+    <div class="border border-gray-100 rounded-xl bg-white shadow-sm overflow-hidden flex flex-col">
+        <div class="overflow-auto scrollbar-hide max-h-[468px]">
+            <table class="w-full min-w-max text-center text-[11px] text-gray-700 border-collapse whitespace-nowrap">
+                <thead class="bg-[#D50000] text-white sticky top-0 z-30 shadow-sm">
+                    <tr class="uppercase tracking-wider">
+                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">GL Account</th>
+                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">Account Title</th>
+                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">Level 4</th>
+                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">Level 3</th>
+                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">Level 2</th>
+                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">Level 1</th>
+                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">FS Account Type</th>
+                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">Normal Balance</th>
+                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">Status</th>
+                    </tr>
+                </thead>
 
-        <div class="flex items-center justify-center gap-4 py-3 border-t border-gray-100 bg-gray-50/50">
-            <button onclick="prevPage()" class="px-3 py-1 text-[10px] font-semibold text-gray-600 bg-white border border-gray-200 rounded">
+                <tbody id="glTableBody" class="divide-y divide-gray-100 bg-white">
+                    <tr>
+                        <td colspan="9" class="p-12 text-center text-gray-400 italic font-medium">
+                            No data yet.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="flex h-[45px] items-center justify-center gap-4 py-4 border-t border-gray-100 bg-gray-50/50">
+            <button id="btn-prev-gl" onclick="prevPage()"
+                class="px-4 py-1.5 text-[11px] font-bold border border-gray-300 text-gray-600 rounded uppercase tracking-wider hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
                 Prev
             </button>
 
-            <span id="pageInfo" class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+            <span id="pageInfo" class="text-[11px] font-bold text-gray-500 uppercase tracking-widest">
                 1 / 1
             </span>
 
-            <button onclick="nextPage()" class="px-3 py-1 text-[10px] font-semibold text-gray-600 bg-white border border-gray-200 rounded">
+            <button id="btn-next-gl" onclick="nextPage()"
+                class="px-4 py-1.5 text-[11px] font-bold border border-gray-300 text-gray-600 rounded uppercase tracking-wider hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
                 Next
             </button>
         </div>
@@ -325,37 +335,39 @@
             // RENDER ROWS
             // =========================
             data.data.forEach(gl => {
-
                 const isEnabled = gl.status == 1;
-
                 const row = document.createElement('tr');
 
-                // disabled styling
+                // Root row styling with Fluid Transition
                 row.className = `
-                    cursor-pointer transition-all
-                    ${isEnabled ? 'hover:bg-red-50/50' : 'opacity-40 grayscale'}
+                    group relative row-fluid-transition border-b border-gray-50 bg-white
+                    ${isEnabled ? 'hover:bg-red-100/60' : 'opacity-40 grayscale'}
                 `;
 
                 row.innerHTML = `
-                    <td class="px-2 py-3">${gl.gl_account}</td>
-                    <td class="px-2 py-3">${gl.account_title}</td>
-                    <td class="px-2 py-3">${gl.level_4}</td>
-                    <td class="px-2 py-3">${gl.level_3}</td>
-                    <td class="px-2 py-3">${gl.level_2}</td>
-                    <td class="px-2 py-3">${gl.level_1}</td>
-                    <td class="px-2 py-3">${gl.fs_account_type}</td>
-                    <td class="px-2 py-3">${gl.normal_balance}</td>
+                    <!-- The Piano Key Accent -->
+                    <td class="px-6 py-3 font-bold relative group-hover:translate-x-1 transition-transform duration-300">
+                        <!-- The Piano Key (Now properly contained) -->
+                        <div class="absolute left-0 top-0 bottom-0 w-[4px] bg-[#D50000] scale-y-0 group-hover:scale-y-100 transition-transform duration-300 origin-center"></div>
+                        ${gl.gl_account}
+                    </td>
+                    <td class="px-6 py-3">${gl.account_title}</td>
+                    <td class="px-6 py-3">${gl.level_4}</td>
+                    <td class="px-6 py-3">${gl.level_3}</td>
+                    <td class="px-6 py-3">${gl.level_2}</td>
+                    <td class="px-6 py-3">${gl.level_1}</td>
+                    <td class="px-6 py-3">${gl.fs_account_type}</td>
+                    <td class="px-6 py-3">${gl.normal_balance}</td>
 
                     <!-- STATUS TOGGLE -->
-                    <td class="px-2 py-3 text-center">
+                    <td class="px-6 py-3 text-center">
                         <label class="relative inline-flex items-center justify-center cursor-pointer gap-2"
                             onclick="event.stopPropagation()">
-
                             <input type="checkbox"
                                 ${isEnabled ? 'checked' : ''}
                                 class="sr-only peer"
                                 onchange="toggleStatus(this, '${gl.gl_account}')">
-
+                            
                             <div class="w-9 h-5 bg-gray-200 rounded-full peer-focus:outline-none
                                 peer peer-checked:after:translate-x-full
                                 after:content-[''] after:absolute after:top-[2px] after:left-[2px]
@@ -363,11 +375,10 @@
                                 after:transition-all peer-checked:bg-[#D50000]">
                             </div>
 
-                            <span class="text-[9px] font-bold uppercase status-label
-                                ${isEnabled ? 'text-[#D50000]' : 'text-gray-500'}">
+                            <span class="text-[9px] font-bold uppercase status-label transition-colors duration-300
+                                ${isEnabled ? 'text-[#D50000]' : 'text-gray-500'} group-hover:text-[#D50000]">
                                 ${isEnabled ? 'Enabled' : 'Disabled'}
                             </span>
-
                         </label>
                     </td>
                 `;
@@ -462,4 +473,20 @@
     0% { opacity: 0; transform: scale(0.95); }
     100% { opacity: 1; transform: scale(1); }
 }
+
+/* This hides the scrollbar across all browsers while keeping scroll functionality */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+.scrollbar-hide {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+
+/* Custom fluid transition */
+.row-fluid-transition {
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
 </style>

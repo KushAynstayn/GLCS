@@ -53,7 +53,7 @@ class GLCodeController extends Controller
         if ($page < 1) $page = 1;
 
         return $this->json(
-            $this->service->getAllGLCodes($page, 50)
+            $this->service->getAllGLCodes($page, 20)
         );
     }
 

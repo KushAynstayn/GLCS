@@ -7,7 +7,7 @@ class Model {
     protected $db;
 
     public function __construct() {
-        $this->db = Database::getInstance()->getConnection();
+        $this->db = Database::getInstance()->getConnectionOld();
 
         if (!$this->db) {
             throw new Exception("Database connection failed");

@@ -2,7 +2,7 @@
 // reports_overall.php
 ?>
 
-<div class="max-w-7xl mx-auto mb-16">
+<div class="w-full mx-auto mb-16">
     <h1 class="text-3xl font-extrabold text-[#a61e22] tracking-tight">
         Overall Reports
     </h1>

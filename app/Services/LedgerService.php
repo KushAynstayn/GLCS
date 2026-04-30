@@ -14,8 +14,15 @@ class LedgerService extends BaseImportService
         return [
             'datetime' => $this->parseExcelDate($row['date_time'] ?? null),
             'gl_code' => $row['gl_code'] ?? null,
-            'gl_desc' => $row['gl_desc'] ?? null,
-            'desc' => $row['desc'] ?? null,
+            'gl_desc' => $row['gl_desc']
+                ?? $row['gl_description']
+                ?? $row['gl desc']
+                ?? null,
+
+            'desc' => $row['desc']
+                ?? $row['description']
+                ?? $row['transaction_desc']
+                ?? null,
             'reference' => $row['reference'] ?? null,
             'entry_number' => $row['entry_number'] ?? null,
             'currency' => $row['currency'] ?? null,

@@ -2,7 +2,7 @@
 // reports_gle.php
 ?>
 
-<div class="max-w-7xl mx-auto mb-16">
+<div class="w-full mx-auto mb-16">
     <h1 class="text-3xl font-extrabold text-[#a61e22] tracking-tight">
         General Ledger Extraction Report
     </h1>
@@ -41,33 +41,28 @@
 
     <?php include __DIR__ . '/../components/modals/report-filter_modal.php'; ?>
 
-    <div class="border border-gray-100 rounded-xl bg-white shadow-sm overflow-hidden">
+    <div class="border border-gray-100 rounded-xl bg-white shadow-sm overflow-hidden flex flex-col">
 
-        <div class="overflow-x-auto thin-scrollbar border border-gray-100 rounded-xl shadow-sm">
-    
-        <table class="w-full text-center text-[11px] text-gray-700 border-collapse whitespace-nowrap">
-            <thead class="bg-[#D50000] text-white sticky top-0 z-30">
-                <tr class="uppercase tracking-wider">
-                    <th class="px-4 py-3 font-bold border-b border-[#8e191d]">Date Time</th>
-                    <th class="px-4 py-3 font-bold border-b border-[#8e191d]">GL Code</th>
-                    <th class="px-4 py-3 font-bold border-b border-[#8e191d]">GL Description</th>
-                    <th class="px-4 py-3 font-bold border-b border-[#8e191d]">Description</th>
-                    <th class="px-4 py-3 font-bold border-b border-[#8e191d]">Reference</th>
-                    <th class="px-4 py-3 font-bold border-b border-[#8e191d]">Entry Number</th>
-                    <th class="px-4 py-3 font-bold border-b border-[#8e191d]">Currency</th>
-                    <th class="px-4 py-3 font-bold border-b border-[#8e191d]">Debit</th>
-                    <th class="px-4 py-3 font-bold border-b border-[#8e191d]">Credit</th>
-                    <th class="px-4 py-3 font-bold border-b border-[#8e191d]">Transaction Type</th>
-                    <th class="px-4 py-3 font-bold border-b border-[#8e191d]">Branch ID</th>
-                    <th class="px-4 py-3 font-bold border-b border-[#8e191d]">Cost Center</th>
-                    <th class="px-4 py-3 font-bold border-b border-[#8e191d]">Item</th>
-                </tr>
-            </thead>
-        </table>
+        <div class="overflow-auto scrollbar-hide max-h-[468px]">
+            <table class="w-full min-w-max text-center text-[11px] text-gray-700 border-collapse whitespace-nowrap">
+                <thead class="bg-[#D50000] text-white sticky top-0 z-30 shadow-sm">
+                    <tr class="uppercase tracking-wider">
+                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">Date Time</th>
+                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">GL Code</th>
+                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">GL Description</th>
+                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">Description</th>
+                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">Reference</th>
+                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">Entry Number</th>
+                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">Currency</th>
+                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">Debit</th>
+                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">Credit</th>
+                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">Transaction Type</th>
+                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">Cost Center</th>
+                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">Item</th>
+                    </tr>
+                </thead>
 
-        <div class="max-h-[450px] overflow-y-auto no-scrollbar">
-            <table class="w-full text-center text-[11px] text-gray-700 border-collapse whitespace-nowrap">
-                <tbody id="reportTableBody" class="divide-y divide-gray-100">
+                <tbody id="reportTableBody" class="divide-y divide-gray-100 bg-white">
                     <tr>
                         <td colspan="13" class="p-12 text-center text-gray-400 italic font-medium">
                             No data yet.
@@ -76,9 +71,8 @@
                 </tbody>
             </table>
         </div>
-    </div>
 
-        <div class="flex items-center justify-center gap-4 py-4 border-t border-gray-100 bg-gray-50/50">
+        <div class="flex h-[45px] items-center justify-center gap-4 py-4 border-t border-gray-100 bg-gray-50/50">
             <button id="btn-prev" onclick="prevPage()"
                 class="px-4 py-1.5 text-[11px] font-bold border border-gray-300 text-gray-600 rounded uppercase tracking-wider hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
                 Prev
@@ -98,18 +92,71 @@
 </div>
 
 <script>
-    let currentFilters = { partner: '', dateFrom: '', dateTo: '' };
+    let currentFilters = {};
     let currentPage = 1;
     let totalPages = 1;
+
+
+    function applyFilters() {
+        currentPage = 1;
+
+        const glRaw = document.getElementById('glInput').value.trim();
+
+        currentFilters = {
+            partner: document.getElementById('partnerInput').value,
+            date_from: document.getElementById('dateFrom').value,
+            date_to: document.getElementById('dateTo').value,
+            main_zone: document.getElementById('mainZone').value,
+            zone: document.getElementById('zone').value,
+            region: document.getElementById('region').value,
+            area: document.getElementById('area').value,
+            page: currentPage
+        };
+
+        // ✅ GL parsing
+        if (!glRaw) {
+            currentFilters.gl_code = '';
+        } else if (glRaw.includes(' - ')) {
+            currentFilters.gl_code = glRaw.split(' - ')[0].trim();
+        } else {
+            currentFilters.gl_code = glRaw;
+        }
+
+        fetchData();       // use stored filters
+        closeModal('zone');
+        resetFiltersUI();  // safe now
+    }
+
 
     // MODALS
     function openModal(id) {
         document.getElementById('modal-' + id).classList.remove('hidden');
     }
 
+
+    function resetFiltersUI() {
+        document.getElementById('mainZone').value = '';
+        document.getElementById('zone').innerHTML = `<option value="">ALL</option>`;
+        document.getElementById('region').innerHTML = `<option value="">ALL</option>`;
+        document.getElementById('area').value = '';
+        document.getElementById('dateFrom').value = '';
+        document.getElementById('dateTo').value = '';
+        document.getElementById('glInput').value = '';
+        document.getElementById('partnerInput').value = '';
+    }
+
     function closeModal(id) {
         document.getElementById('modal-' + id).classList.add('hidden');
+        
     }
+
+
+    function cancelFilters() {
+        resetFiltersUI();
+        closeModal('zone');
+    }
+
+    
 
     // TRIGGERED BY THE SEARCH BUTTON
     function searchPartner() {
@@ -129,25 +176,29 @@
         const tbody = document.getElementById("reportTableBody");
         tbody.innerHTML = `<tr><td colspan="13" class="p-12 text-center text-gray-400 italic">Loading...</td></tr>`;
 
+        // ✅ ALWAYS USE STORED FILTERS
+        let payload = {
+            ...currentFilters,
+            page: currentPage
+        };
+
+        console.log("FINAL PAYLOAD:", payload);
+
         let res = await fetch("/GLCS/public/index.php?api=1&action=report-partner", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ 
-                partner: currentFilters.partner, 
-                date_from: currentFilters.dateFrom, 
-                date_to: currentFilters.dateTo,
-                page: currentPage // Sending the requested page to PHP!
-            })
+            body: JSON.stringify(payload)
         });
 
         let data = await res.json();
+
+        console.log("API RESPONSE:", data);
 
         if (!data.ok) {
             alert("Failed to load report");
             return;
         }
 
-        // Update global pagination state from PHP response
         totalPages = data.total_pages || 1;
         currentPage = data.page || 1;
 
@@ -175,20 +226,21 @@
         }
 
         tbody.innerHTML = rows.map(row => `
-            <tr class="hover:bg-red-50 transition-colors duration-150">
-                <td class="px-4 py-3 font-medium">${formatDate(row.datetime)}</td>
-                <td class="px-4 py-3 font-medium">${row.gl_code ?? ''}</td>
-                <td class="px-4 py-3 font-medium">${row.gl_desc ?? ''}</td>
-                <td class="px-4 py-3 font-medium">${row.desc ?? ''}</td>
-                <td class="px-4 py-3 font-medium">${row.reference ?? ''}</td>
-                <td class="px-4 py-3 font-medium">${row.entry_number ?? ''}</td>
-                <td class="px-4 py-3 font-medium">${row.currency ?? ''}</td>
-                <td class="px-4 py-3 font-medium">${row.debit ?? ''}</td>
-                <td class="px-4 py-3 font-medium">${row.credit ?? ''}</td>
-                <td class="px-4 py-3 font-medium">${row.transaction_type ?? ''}</td>
-                <td class="px-4 py-3 font-medium">${row.branch_id ?? ''}</td>
-                <td class="px-4 py-3 font-medium">${row.cost_center ?? ''}</td>
-                <td class="px-4 py-3 font-medium">${row.item ?? ''}</td>
+            <tr class="group row-fluid-transition border-b border-gray-100 bg-white hover:bg-gradient-to-r hover:bg-red-100/50 hover:to-transparent">
+                <td class="px-6 py-2 text-[11px] font-bold border-l-4 border-transparent group-hover:border-[#D50000] transition-all duration-300">
+                    ${formatDate(row.datetime)}
+                </td>
+                <td class="px-6 py-3 font-bold group-hover:translate-x-1 transition-transform duration-300">${row.gl_code ?? ''}</td>
+                <td class="px-6 py-3 font-bold">${row.gl_desc ?? ''}</td>
+                <td class="px-6 py-3 font-bold">${row.desc ?? ''}</td>
+                <td class="px-6 py-3 font-bold">${row.reference ?? ''}</td>
+                <td class="px-6 py-3 font-bold">${row.entry_number ?? ''}</td>
+                <td class="px-6 py-3 font-bold">${row.currency ?? ''}</td>
+                <td class="px-6 py-3 font-bold group-hover:text-[#D50000] transition-colors">${row.debit ?? ''}</td>
+                <td class="px-6 py-3 font-bold group-hover:text-[#D50000] transition-colors">${row.credit ?? ''}</td>
+                <td class="px-6 py-3 font-bold">${row.transaction_type ?? ''}</td>
+                <td class="px-6 py-3 font-bold">${row.cost_center ?? ''}</td>
+                <td class="px-6 py-3 font-bold">${row.item ?? ''}</td>
             </tr>
         `).join('');
 
@@ -248,6 +300,125 @@
     }
 
     loadPartners();
+
+
+    async function loadGLCodes() {
+        let res = await fetch("/GLCS/public/index.php?api=1&action=glcodes");
+        let data = await res.json();
+
+        console.log("GL DATA:", data); // DEBUG
+
+        let list = document.getElementById("gl_list");
+        list.innerHTML = "";
+
+        if (!data.ok || !data.data) return;
+
+        data.data.forEach(gl => {
+            let opt = document.createElement("option");
+            opt.value = gl.gl_account + " - " + gl.account_title;
+            list.appendChild(opt);
+        });
+    }
+
+    // LOAD ON PAGE START
+    loadGLCodes();
+    
+
+
+    async function loadMainZones() {
+        let res = await fetch("/GLCS/public/index.php?api=1&action=main-zones");
+        let data = await res.json();
+
+        let select = document.getElementById("mainZone");
+        select.innerHTML = `<option value="">ALL</option>`;
+
+        data.data.forEach(z => {
+            let opt = document.createElement("option");
+            opt.value = z.main_zone_code;
+            opt.textContent = z.main_zone_code;
+            select.appendChild(opt);
+        });
+    }
+
+
+    async function loadZones(mainZone) {
+        let res = await fetch(`/GLCS/public/index.php?api=1&action=zones&main_zone=${mainZone}`);
+        let data = await res.json();
+
+        let zone = document.getElementById("zone");
+        zone.innerHTML = `<option value="">ALL</option>`;
+
+        data.data.forEach(z => {
+            let opt = document.createElement("option");
+            opt.value = z.zone_code;
+            opt.textContent = z.zone_code;
+            zone.appendChild(opt);
+        });
+    }
+
+
+    async function loadRegions(zoneCode) {
+        let res = await fetch(`/GLCS/public/index.php?api=1&action=regions&zone=${zoneCode}`);
+        let data = await res.json();
+
+        let region = document.getElementById("region");
+        region.innerHTML = `<option value="">ALL</option>`;
+
+        data.data.forEach(r => {
+            let opt = document.createElement("option");
+            opt.value = r.region_description;
+            opt.textContent = r.region_description;
+            region.appendChild(opt);
+        });
+    }
+
+
+    async function loadAreas() {
+        let res = await fetch("/GLCS/public/index.php?api=1&action=areas");
+        let data = await res.json();
+
+        let area = document.getElementById("area");
+        area.innerHTML = `<option value="">ALL</option>`;
+
+        data.data.forEach(a => {
+            let opt = document.createElement("option");
+            opt.value = a;
+            opt.textContent = a;
+            area.appendChild(opt);
+        });
+    }
+
+
+    document.getElementById("mainZone").addEventListener("change", function () {
+        let val = this.value;
+
+        let zone = document.getElementById("zone");
+        let region = document.getElementById("region");
+        let area = document.getElementById("area");
+
+        if (!val) {
+            zone.innerHTML = `<option value="">ALL</option>`;
+            region.innerHTML = `<option value="">ALL</option>`;
+            area.value = "";
+            return;
+        }
+
+        loadZones(val);
+    });
+
+
+    document.getElementById("zone").addEventListener("change", function () {
+        let val = this.value;
+
+        document.getElementById("region").innerHTML = `<option value="">ALL</option>`;
+
+        if (val) loadRegions(val);
+    });
+
+
+    loadMainZones();
+    loadAreas();
+
 </script>
 
 <style>
@@ -265,16 +436,13 @@
 
 
 /* Hide scrollbar for Chrome, Safari and Opera */
-    .no-scrollbar::-webkit-scrollbar {
+    .scrollbar-hide::-webkit-scrollbar {
         display: none;
     }
-
-    /* Hide scrollbar for IE, Edge and Firefox */
-    .no-scrollbar {
+    .scrollbar-hide {
         -ms-overflow-style: none;  /* IE and Edge */
         scrollbar-width: none;  /* Firefox */
     }
-
     /* Optional: If you want a "Ghost" scrollbar that only appears on hover */
     .thin-scrollbar::-webkit-scrollbar {
         width: 6px;
@@ -287,4 +455,11 @@
     .thin-scrollbar:hover::-webkit-scrollbar-thumb {
         background: rgba(0,0,0,0.2);
     }
+
+
+    /* Custom fluid transition */
+    .row-fluid-transition {
+        transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
 </style>

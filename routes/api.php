@@ -97,6 +97,31 @@ switch ($action) {
         (new GLCodeController())->search();
         break;
 
+    case 'main-zones':
+        require_once __DIR__ . '/../app/Controllers/ReportController.php';
+        (new ReportController())->getMainZones();
+        break;
+
+    case 'zones':
+        require_once __DIR__ . '/../app/Controllers/ReportController.php';
+        (new ReportController())->getZones();
+        break;
+
+    case 'regions':
+        require_once __DIR__ . '/../app/Controllers/ReportController.php';
+        (new ReportController())->getRegions();
+        break;
+
+    case 'areas':
+        require_once __DIR__ . '/../app/Controllers/ReportController.php';
+        (new ReportController())->getAreas();
+        break;
+
+    case 'glcodes':
+        require_once __DIR__ . '/../app/Controllers/ReportController.php';
+        (new ReportController())->getGLCodes();
+        break;
+
     default:
         echo json_encode([
             'ok' => false,

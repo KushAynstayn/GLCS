@@ -34,4 +34,44 @@ class ReportController extends Controller
             $this->service->getPartnerList()
         );
     }
+
+
+    public function getGLCodes()
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        $userId = $_SESSION['user']['id'] ?? 0;
+        $role = $_SESSION['user']['role_name'] ?? '';
+
+        return $this->json(
+            $this->service->getGLCodes($userId, $role)
+        );
+    }
+
+    public function getMainZones()
+    {
+        return $this->json(
+            $this->service->getMainZones()
+        );
+    }
+
+    public function getZones()
+    {
+        $input = $_GET['main_zone'] ?? '';
+        return $this->json($this->service->getZones($input));
+    }
+
+    public function getRegions()
+    {
+        $input = $_GET['zone'] ?? '';
+        return $this->json($this->service->getRegions($input));
+    }
+
+    public function getAreas()
+    {
+        return $this->json($this->service->getAreas());
+    }
+
 }
