@@ -57,7 +57,7 @@
                     </tr>
                 </thead>
 
-                <tbody id="glTableBody" class="divide-y divide-gray-100 bg-white">
+                <tbody id="glTableBody" class="divide-y divide-gray-100 bg-white uppercase">
                     <tr>
                         <td colspan="9" class="p-12 text-center text-gray-400 italic font-medium">
                             No data yet.
@@ -174,7 +174,7 @@
         data.data.forEach(file => {
 
             let table = document.createElement('table');
-            table.className = "w-full text-xs border mb-4";
+            table.className = "w-full text-xs border mb-4 uppercase";
 
             let headers = Object.keys(file.preview[0] || {});
 
@@ -333,7 +333,7 @@
 
                 // Root row styling with Fluid Transition
                 row.className = `
-                    group relative row-fluid-transition border-b border-gray-50 bg-white
+                    group relative row-fluid-transition border-b border-gray-50 bg-white uppercase
                     ${isEnabled ? 'hover:bg-red-100/60' : 'opacity-40 grayscale'}
                 `;
 
