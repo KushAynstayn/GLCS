@@ -50,7 +50,7 @@
             <!-- Report Filter Labels Added Here -->
             <div class="grid grid-cols-2 gap-3">
                 <div>
-                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Main Zone</label>
+                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Role</label>
                     <select name="role_id" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all cursor-pointer">
                         <?php if (!empty($roles)): ?>
                             <?php foreach ($roles as $role): ?>
@@ -61,7 +61,7 @@
                 </div>
                 
                 <div class="relative" id="dept-dropdown-wrapper">
-                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Zone</label>
+                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Department</label>
                     <input type="hidden" id="selected_dept_id" name="department_id">    
                     <input type="text" id="dept_search" placeholder="Select or Add..." 
                         class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all cursor-pointer"
@@ -91,9 +91,9 @@
             <!-- More Report Filter Labels Added Here -->
             <div class="grid grid-cols-2 gap-3">
                 <div class="relative" id="lvl4-wrapper">
-                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Region</label>
+                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1"> Level 4 Category</label>
                     <input type="text" id="lvl4_input"
-                        placeholder="Search Region..."
+                        placeholder="Search Category..."
                         onclick="toggleLvl4Dropdown(true)"
                         class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg">
 
@@ -108,12 +108,12 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Area</label>
+                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Assign GL Codes</label>
                     <div class="relative" id="gl-dropdown-wrapper">
                         <input type="text" id="gl_global_search"
                             onclick="handleGlClick()"
                             autocomplete="off"        
-                            placeholder="Search Area..."
+                            placeholder="Search any GL code..."
                             class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none"
                             onclick="toggleGlDropdown(true)">
                         
