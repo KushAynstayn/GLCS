@@ -11,30 +11,24 @@
         Filter by organization hierarchy, GL codes, or partner names to view detailed extraction records.
     </p>
 
-    <div class="flex items-center justify-between mb-4">
+    <div class="flex items-center justify-end mb-4">
         <div class="flex gap-3">
 
             <button onclick="openModal('zone')" id="btn-zone"
-                class="px-4 py-2 text-xs font-bold uppercase tracking-wider text-red-700 bg-red-50 border border-red-100 rounded-lg hover:bg-red-600 hover:text-white transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1 flex items-center gap-3">
+                class="px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-red-700 bg-red-50 border border-red-100 rounded-lg hover:bg-red-600 hover:text-white transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1 flex items-center gap-2">
 
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                 </svg>
 
-                <div class="flex flex-col items-start leading-tight">
-                    <span>Filter</span>
-                    <span class="text-[9px] opacity-75">Search Data</span>
-                </div>
+                <span>Filter</span>
             </button>
 
-            <button class="px-4 py-2 text-xs font-bold uppercase tracking-wider text-red-700 bg-red-50 border border-red-100 rounded-lg hover:bg-red-600 hover:text-white transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1 flex items-center gap-3">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <button class="px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-red-700 bg-red-50 border border-red-100 rounded-lg hover:bg-red-600 hover:text-white transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1 flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                 </svg>
-                <div class="flex flex-col items-start leading-tight">
-                    <span>Download</span>
-                    <span class="text-[9px] opacity-75">Export Data</span>
-                </div>
+                <span>Download</span>
             </button>
         </div>
     </div>
@@ -322,7 +316,7 @@
 
     // LOAD ON PAGE START
     loadGLCodes();
-    
+     
 
 
     async function loadMainZones() {
