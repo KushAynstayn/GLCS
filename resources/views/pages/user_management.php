@@ -51,7 +51,7 @@
                         <th class="px-6 py-1.5 font-bold border-b border-[#8e191d]">Status</th>
                     </tr>
                 </thead>
-                <tbody id="userTableBody" class="divide-y divide-gray-100 bg-white">
+                <tbody id="userTableBody" class="divide-y divide-gray-100 bg-white uppercase">
                     <?php if (!empty($users)): ?>
                         <?php foreach ($users as $index => $user): ?>
                             <tr onclick="openModal('userman')" 

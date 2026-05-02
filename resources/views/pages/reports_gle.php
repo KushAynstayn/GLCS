@@ -33,6 +33,25 @@
         </div>
     </div>
 
+    <!-- ADDED: Filter Summary and Totals Containers -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        <!-- Filter Info Container -->
+        <div class="md:col-span-2 p-4 bg-white border border-gray-100 rounded-xl shadow-sm">
+            <h3 class="text-[10px] uppercase font-bold text-gray-400 mb-2 tracking-widest">Active Filters</h3>
+            <div id="activeFiltersContainer" class="flex flex-wrap gap-2">
+                <span class="text-xs text-gray-400 italic">No filters applied</span>
+            </div>
+        </div>
+
+        <!-- Total Credit Container -->
+        <div class="p-4 bg-white border border-red-100 rounded-xl shadow-sm flex flex-col justify-center">
+            <h3 class="text-[10px] uppercase font-bold text-red-400 mb-1 tracking-widest">Total Credit (Current Page)</h3>
+            <div id="totalCreditDisplay" class="text-2xl font-black text-[#a61e22]">
+                0.00
+            </div>
+        </div>
+    </div>
+
     <?php include __DIR__ . '/../components/modals/report-filter_modal.php'; ?>
 
     <div class="border border-gray-100 rounded-xl bg-white shadow-sm overflow-hidden flex flex-col">
@@ -56,7 +75,8 @@
                     </tr>
                 </thead>
 
-                <tbody id="reportTableBody" class="divide-y divide-gray-100 bg-white">
+                <!-- Added 'uppercase' class to handle all content formatting -->
+                <tbody id="reportTableBody" class="divide-y divide-gray-100 bg-white uppercase">
                     <tr>
                         <td colspan="13" class="p-8 text-center text-gray-400 italic font-medium">
                             No data yet.
@@ -116,6 +136,7 @@
             currentFilters.gl_code = glRaw;
         }
 
+        updateFilterUI(); // Update the badges
         fetchData();       // use stored filters
         closeModal('zone');
         resetFiltersUI();  // safe now
@@ -150,7 +171,37 @@
         closeModal('zone');
     }
 
-    
+    // UPDATED: UI function for displaying active filters
+    function updateFilterUI() {
+        const container = document.getElementById('activeFiltersContainer');
+        container.innerHTML = '';
+        
+        let hasFilters = false;
+        const labels = {
+            partner: 'Partner',
+            gl_code: 'GL Code',
+            date_from: 'From',
+            date_to: 'To',
+            main_zone: 'Main Zone',
+            zone: 'Zone',
+            region: 'Region',
+            area: 'Area'
+        };
+
+        Object.keys(currentFilters).forEach(key => {
+            if (currentFilters[key] && key !== 'page') {
+                hasFilters = true;
+                const span = document.createElement('span');
+                span.className = "px-2 py-1 bg-red-50 text-[10px] font-bold text-red-700 border border-red-100 rounded-md uppercase";
+                span.textContent = `${labels[key] || key}: ${currentFilters[key]}`;
+                container.appendChild(span);
+            }
+        });
+
+        if (!hasFilters) {
+            container.innerHTML = '<span class="text-xs text-gray-400 italic">No filters applied</span>';
+        }
+    }
 
     // TRIGGERED BY THE SEARCH BUTTON
     function searchPartner() {
@@ -161,6 +212,7 @@
         
         // Always reset to page 1 on a new search
         currentPage = 1; 
+        updateFilterUI();
         fetchData();
         closeModal('partner');
     }
@@ -204,6 +256,9 @@
         const tbody = document.getElementById("reportTableBody");
         const btnPrev = document.getElementById("btn-prev");
         const btnNext = document.getElementById("btn-next");
+        const creditDisplay = document.getElementById("totalCreditDisplay");
+
+        let totalCredit = 0;
 
         if (!rows.length) {
             tbody.innerHTML = `
@@ -216,10 +271,16 @@
             document.getElementById("pageInfo").textContent = `1 / 1`;
             btnPrev.disabled = true;
             btnNext.disabled = true;
+            creditDisplay.textContent = "0.00";
             return;
         }
 
-        tbody.innerHTML = rows.map(row => `
+        tbody.innerHTML = rows.map(row => {
+            // Accumulate total credit for this page
+            const val = parseFloat(row.credit) || 0;
+            totalCredit += val;
+
+            return `
             <tr class="group row-fluid-transition border-b border-gray-100 bg-white hover:bg-gradient-to-r hover:bg-red-100/50 hover:to-transparent">
                 <td class="px-6 py-1 text-[11px] font-bold border-l-4 border-transparent group-hover:border-[#D50000] transition-all duration-300">
                     ${formatDate(row.datetime)}
@@ -236,7 +297,10 @@
                 <td class="px-6 py-1 font-bold">${row.cost_center ?? ''}</td>
                 <td class="px-6 py-1 font-bold">${row.item ?? ''}</td>
             </tr>
-        `).join('');
+        `}).join('');
+
+        // Update Total Credit display
+        creditDisplay.textContent = totalCredit.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
         // Update UI Page Info
         document.getElementById("pageInfo").textContent = `${currentPage} / ${totalPages}`;

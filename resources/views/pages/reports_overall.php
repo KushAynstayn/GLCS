@@ -11,24 +11,24 @@
         View a comprehensive summary of total records by partner and GL code.
     </p>
 
+    <!-- UI Header: Search on Left, Buttons on Right for Uniformity -->
     <div class="flex items-center justify-between mb-4">
-        <button type="button"
-            class="px-4 py-2 text-xs font-bold uppercase tracking-wider text-red-700 bg-red-50 border border-red-100 rounded-lg hover:bg-red-600 hover:text-white transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1 flex items-center gap-3">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-            </svg>
-            <div class="flex flex-col items-start leading-tight">
-                <span>Download</span>
-                <span class="text-[9px] opacity-75">Export Data</span>
-            </div>
-        </button>
+        <!-- Search Section (Left) -->
+        <div class="flex items-center gap-2">
+            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap">Search</label>
+            <input type="text" id="searchInput" placeholder="Search by partner or GL code..." 
+                class="px-4 py-1.5 text-xs border border-gray-200 rounded-lg text-gray-600 focus:outline-none focus:ring-1 focus:ring-[#D50000] w-64 transition-all">
+        </div>
 
-        <div class="flex items-center gap-6">
-            <div class="flex items-center gap-2">
-                <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap">Search</label>
-                <input type="text" id="searchInput" placeholder="Search by partner or GL code..." 
-                    class="px-4 py-1.5 text-xs border border-gray-200 rounded-lg text-gray-600 focus:outline-none focus:ring-1 focus:ring-[#D50000] w-64 transition-all">
-            </div>
+        <!-- Download Section (Right) -->
+        <div class="flex items-center gap-3">
+            <button type="button"
+                class="px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-red-700 bg-red-50 border border-red-100 rounded-lg hover:bg-red-600 hover:text-white transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1 flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                </svg>
+                <span>Download</span>
+            </button>
         </div>
     </div>
 
@@ -42,7 +42,7 @@
                         <th class="px-4 py-1.5 font-bold border-b border-[#8e191d]">Amount</th>
                     </tr>
                 </thead>
-                <tbody id="reportTableBody" class="divide-y divide-gray-100">
+                <tbody id="reportTableBody" class="divide-y divide-gray-100 uppercase">
                     <tr>
                         <td colspan="3" class="p-8 text-center text-gray-400 italic font-medium">
                             No data yet.
