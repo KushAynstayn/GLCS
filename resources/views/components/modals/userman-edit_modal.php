@@ -20,34 +20,68 @@
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">ID Number</label>
-                        <input type="text" class="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all" value="1">
+                        <input id="edit_id_number" type="text" class="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all">
                     </div>
                     <div>
                         <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Username</label>
-                        <input type="text" class="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all" value="admi1">
+                        <input id="edit_username" type="text" class="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all">
                     </div>
                 </div>
 
                 <div class="grid grid-cols-3 gap-3">
                     <div>
                         <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">First Name</label>
-                        <input type="text" class="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all" value="ADMIN">
+                        <input id="edit_firstname" type="text" class="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all">
                     </div>
                     <div>
                         <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Middle Name</label>
-                        <input type="text" class="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all">
+                        <input id="edit_middlename" type="text" class="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all">
                     </div>
                     <div>
                         <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Last Name</label>
-                        <input type="text" class="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all" value="ADMIN">
+                        <input id="edit_lastname"type="text" class="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all">
                     </div>
                 </div>
             </div>
 
             <div class="space-y-1">
+                <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Role</h3>
+                <select id="edit_role"
+                    class="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none cursor-pointer">
+
+                    <?php if (!empty($roles)): ?>
+                        <?php foreach ($roles as $role): ?>
+                            <option value="<?= $role['id'] ?>">
+                                <?= htmlspecialchars($role['name']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </select>
+            </div>
+
+            <div class="space-y-1">
+                <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                    Assigned GL Codes
+                </h3>
+
+                <div id="edit_gl_tags_container"
+                    class="flex flex-wrap gap-2 p-2 border border-gray-200 rounded-lg max-h-[120px] overflow-y-auto">
+                    <!-- GL tags will appear here -->
+                </div>
+            </div>
+
+            <input id="edit_gl_search"
+                type="text"
+                placeholder="Search GL Code..."
+                class="w-full mt-2 px-3 py-1.5 text-xs border border-gray-200 rounded-lg">
+
+            <div id="edit_gl_results"
+                class="border mt-1 rounded max-h-24 overflow-y-auto text-xs"></div>
+
+            <div class="space-y-1">
                 <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Change Status</h3>
                 <div>
-                    <select class="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all cursor-pointer">
+                    <select  id="edit_status" class="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all cursor-pointer">
                         <option>Active</option>
                         <option>Disabled</option>
                     </select>
@@ -57,18 +91,20 @@
 
         <!-- Footer: Reduced padding and tightened vertical margins -->
         <div class="flex justify-end gap-2 p-4 pt-3 border-t border-gray-100">
-            <button type="button" onclick="closeModal('userman')" 
+            <button type="button" onclick="resetEditModal(); closeModal('userman')" 
                 class="px-4 py-1.5 text-[11px] font-bold uppercase tracking-wider text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all">
                 Cancel
             </button>
-            <button type="button" onclick="openModal('reset-password')" 
+            <button type="button" onclick="resetUserPassword()"
                 class="px-4 py-1.5 text-[11px] font-bold uppercase tracking-wider text-red-700 border border-red-200 rounded-lg hover:bg-red-50 transition-all">
                 Reset Password
             </button>
-            <button type="button" onclick="closeModal('userman'); openModal('success'); setTimeout(() => closeModal('success'), 1000);" 
+            <button type="button" onclick="saveEditUser(); setTimeout(() => closeModal('success'), 1000);" 
                 class="px-4 py-1.5 text-[11px] font-bold uppercase tracking-wider text-white bg-[#D50000] rounded-lg hover:bg-red-700 shadow-sm transition-all">
                 Save
             </button>
         </div>
     </div>
 </div>
+
+

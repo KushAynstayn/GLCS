@@ -60,18 +60,19 @@
             <table class="w-full min-w-max text-center text-[11px] text-gray-700 border-collapse whitespace-nowrap">
                 <thead class="bg-[#D50000] text-white sticky top-0 z-30 shadow-sm">
                     <tr class="uppercase tracking-wider">
-                        <th class="px-6 py-1 font-bold border-b border-[#8e191d]">Date Time</th>
-                        <th class="px-6 py-1 font-bold border-b border-[#8e191d]">GL Code</th>
-                        <th class="px-6 py-1 font-bold border-b border-[#8e191d]">GL Description</th>
-                        <th class="px-6 py-1 font-bold border-b border-[#8e191d]">Description</th>
-                        <th class="px-6 py-1 font-bold border-b border-[#8e191d]">Reference</th>
-                        <th class="px-6 py-1 font-bold border-b border-[#8e191d]">Entry Number</th>
-                        <th class="px-6 py-1 font-bold border-b border-[#8e191d]">Currency</th>
-                        <th class="px-6 py-1 font-bold border-b border-[#8e191d]">Debit</th>
-                        <th class="px-6 py-1 font-bold border-b border-[#8e191d]">Credit</th>
-                        <th class="px-6 py-1 font-bold border-b border-[#8e191d]">Transaction Type</th>
-                        <th class="px-6 py-1 font-bold border-b border-[#8e191d]">Cost Center</th>
-                        <th class="px-6 py-1 font-bold border-b border-[#8e191d]">Item</th>
+                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">Date Time</th>
+                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">GL Code</th>
+                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">GL Description</th>
+                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">Description</th>
+                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">Reference</th>
+                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">Entry Number</th>
+                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">Currency</th>
+                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">Debit</th>
+                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">Credit</th>
+                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">Transaction Type</th>
+                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">Branch ID</th>
+                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">Cost Center</th>
+                        <th class="px-6 py-2 font-bold border-b border-[#8e191d]">Item</th>
                     </tr>
                 </thead>
 
@@ -124,6 +125,9 @@
             zone: document.getElementById('zone').value,
             region: document.getElementById('region').value,
             area: document.getElementById('area').value,
+            branch: document.getElementById('branchInput').value || '',
+            transaction_type: document.getElementById('transactionTypeInput').value || '',
+            currency: document.getElementById('currencyInput').value || '',
             page: currentPage
         };
 
@@ -145,19 +149,36 @@
 
     // MODALS
     function openModal(id) {
+        resetFiltersUI(); // FORCE CLEAN STATE EVERY OPEN
         document.getElementById('modal-' + id).classList.remove('hidden');
+
+        loadAreas();
     }
 
 
     function resetFiltersUI() {
         document.getElementById('mainZone').value = '';
-        document.getElementById('zone').innerHTML = `<option value="">ALL</option>`;
-        document.getElementById('region').innerHTML = `<option value="">ALL</option>`;
-        document.getElementById('area').value = '';
+
+        document.getElementById('zone').innerHTML = `
+            <option value="" disabled selected>Select Zone</option>
+            <option value="">ALL</option>
+        `;
+
+        document.getElementById('region').innerHTML = `
+            <option value="" disabled selected>Select Region</option>
+            <option value="">ALL</option>
+        `;
+
+        loadAreas(); // 🔥 reload properly
+
         document.getElementById('dateFrom').value = '';
         document.getElementById('dateTo').value = '';
         document.getElementById('glInput').value = '';
         document.getElementById('partnerInput').value = '';
+
+        document.getElementById('branchInput').value = '';
+        document.getElementById('transactionTypeInput').value = '';
+        document.getElementById('currencyInput').value = '';
     }
 
     function closeModal(id) {
@@ -185,7 +206,10 @@
             main_zone: 'Main Zone',
             zone: 'Zone',
             region: 'Region',
-            area: 'Area'
+            area: 'Area',
+            branch: 'Branch',
+            transaction_type: 'Transaction Type',
+            currency: 'Currency'
         };
 
         Object.keys(currentFilters).forEach(key => {
@@ -281,21 +305,27 @@
             totalCredit += val;
 
             return `
-            <tr class="group row-fluid-transition border-b border-gray-100 bg-white hover:bg-gradient-to-r hover:bg-red-100/50 hover:to-transparent">
-                <td class="px-6 py-1 text-[11px] font-bold border-l-4 border-transparent group-hover:border-[#D50000] transition-all duration-300">
+            <tr class="group relative row-fluid-transition border-b border-gray-50 bg-white uppercase hover:bg-red-100/60 transition-all duration-300">
+                <!-- The First Cell (Contains the Piano Key) -->
+                <td class="px-6 py-2 text-[11px] font-bold relative group-hover:translate-x-1 transition-transform duration-300">
+                    <!-- The Piano Key Accent -->
+                    <div class="absolute left-0 top-0 bottom-0 w-[4px] bg-[#D50000] scale-y-0 group-hover:scale-y-100 transition-transform duration-300 origin-center"></div>
+                    
                     ${formatDate(row.datetime)}
                 </td>
-                <td class="px-6 py-1 font-bold group-hover:translate-x-1 transition-transform duration-300">${row.gl_code ?? ''}</td>
-                <td class="px-6 py-1 font-bold">${row.gl_desc ?? ''}</td>
-                <td class="px-6 py-1 font-bold">${row.desc ?? ''}</td>
-                <td class="px-6 py-1 font-bold">${row.reference ?? ''}</td>
-                <td class="px-6 py-1 font-bold">${row.entry_number ?? ''}</td>
-                <td class="px-6 py-1 font-bold">${row.currency ?? ''}</td>
-                <td class="px-6 py-1 font-bold group-hover:text-[#D50000] transition-colors">${row.debit ?? ''}</td>
-                <td class="px-6 py-1 font-bold group-hover:text-[#D50000] transition-colors">${row.credit ?? ''}</td>
-                <td class="px-6 py-1 font-bold">${row.transaction_type ?? ''}</td>
-                <td class="px-6 py-1 font-bold">${row.cost_center ?? ''}</td>
-                <td class="px-6 py-1 font-bold">${row.item ?? ''}</td>
+                
+                <td class="px-6 py-2 font-bold group-hover:translate-x-1 transition-transform duration-300">${row.gl_code ?? ''}</td>
+                <td class="px-6 py-2 font-bold">${row.gl_desc ?? ''}</td>
+                <td class="px-6 py-2 font-bold">${row.desc ?? ''}</td>
+                <td class="px-6 py-2 font-bold">${row.reference ?? ''}</td>
+                <td class="px-6 py-2 font-bold">${row.entry_number ?? ''}</td>
+                <td class="px-6 py-2 font-bold">${row.currency ?? ''}</td>
+                <td class="px-6 py-2 font-bold group-hover:text-[#D50000] transition-colors">${row.debit ?? ''}</td>
+                <td class="px-6 py-2 font-bold group-hover:text-[#D50000] transition-colors">${row.credit ?? ''}</td>
+                <td class="px-6 py-2 font-bold">${row.transaction_type ?? ''}</td>
+                <td class="px-6 py-2 font-bold">${row.branch_id ?? ''}</td>
+                <td class="px-6 py-2 font-bold">${row.cost_center ?? ''}</td>
+                <td class="px-6 py-2 font-bold">${row.item ?? ''}</td>
             </tr>
         `}).join('');
 
@@ -380,15 +410,57 @@
 
     // LOAD ON PAGE START
     loadGLCodes();
+
+
+
+    async function loadBranches() {
+        let res = await fetch("/GLCS/public/index.php?api=1&action=branches");
+        let data = await res.json();
+
+        if (!data.ok || !data.data) return;
+
+        let list = document.getElementById("branch_list");
+        list.innerHTML = "";
+
+        data.data.forEach(b => {
+            let opt = document.createElement("option");
+            opt.value = b;
+            list.appendChild(opt);
+        });
+    }
+
+    loadBranches();
+
+
+    async function loadTransactionTypes() {
+        let res = await fetch("/GLCS/public/index.php?api=1&action=transaction-types");
+        let data = await res.json();
+
+        if (!data.ok || !data.data) return;
+
+        let list = document.getElementById("transaction_type_list");
+        list.innerHTML = "";
+
+        data.data.forEach(t => {
+            let opt = document.createElement("option");
+            opt.value = t;
+            list.appendChild(opt);
+        });
+    }
+
+    loadTransactionTypes();
+
+
      
-
-
     async function loadMainZones() {
         let res = await fetch("/GLCS/public/index.php?api=1&action=main-zones");
         let data = await res.json();
 
         let select = document.getElementById("mainZone");
-        select.innerHTML = `<option value="">ALL</option>`;
+        select.innerHTML = `
+            <option value="">Select Main Zone</option>
+            <option value="ALL">ALL</option>
+        `;
 
         data.data.forEach(z => {
             let opt = document.createElement("option");
@@ -404,7 +476,11 @@
         let data = await res.json();
 
         let zone = document.getElementById("zone");
-        zone.innerHTML = `<option value="">ALL</option>`;
+
+        zone.innerHTML = `
+            <option value="" disabled selected>Select Zone</option>
+            <option value="">ALL</option>
+        `;
 
         data.data.forEach(z => {
             let opt = document.createElement("option");
@@ -420,7 +496,11 @@
         let data = await res.json();
 
         let region = document.getElementById("region");
-        region.innerHTML = `<option value="">ALL</option>`;
+
+        region.innerHTML = `
+            <option value="" disabled selected>Select Region</option>
+            <option value="">ALL</option>
+        `;
 
         data.data.forEach(r => {
             let opt = document.createElement("option");
@@ -436,7 +516,14 @@
         let data = await res.json();
 
         let area = document.getElementById("area");
-        area.innerHTML = `<option value="">ALL</option>`;
+
+        // 🔥 Proper structure: placeholder + ALL + data
+        area.innerHTML = `
+            <option value="" disabled selected>Select Area</option>
+            <option value="">ALL</option>
+        `;
+
+        if (!data.ok || !data.data) return;
 
         data.data.forEach(a => {
             let opt = document.createElement("option");
@@ -450,27 +537,40 @@
     document.getElementById("mainZone").addEventListener("change", function () {
         let val = this.value;
 
-        let zone = document.getElementById("zone");
-        let region = document.getElementById("region");
-        let area = document.getElementById("area");
+        if (val === "ALL") {
+            // 🔥 Proper ALL cascade
+            document.getElementById("zone").innerHTML = `
+                <option value="ALL" selected>ALL</option>
+            `;
 
-        if (!val) {
-            zone.innerHTML = `<option value="">ALL</option>`;
-            region.innerHTML = `<option value="">ALL</option>`;
-            area.value = "";
+            document.getElementById("region").innerHTML = `
+                <option value="ALL" selected>ALL</option>
+            `;
+
             return;
         }
 
+        // Normal flow
         loadZones(val);
+
+        document.getElementById("region").innerHTML = `
+            <option value="" disabled selected>Select Region</option>
+            <option value="ALL">ALL</option>
+        `;
     });
 
 
     document.getElementById("zone").addEventListener("change", function () {
         let val = this.value;
 
-        document.getElementById("region").innerHTML = `<option value="">ALL</option>`;
+        if (val === "ALL") {
+            document.getElementById("region").innerHTML = `
+                <option value="ALL" selected>ALL</option>
+            `;
+            return;
+        }
 
-        if (val) loadRegions(val);
+        loadRegions(val);
     });
 
 

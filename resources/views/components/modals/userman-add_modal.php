@@ -62,7 +62,8 @@
                 
                 <div class="relative" id="dept-dropdown-wrapper">
                     <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Department</label>
-                    <input type="hidden" id="selected_dept_id" name="department_id">    
+                    <input type="hidden" id="selected_dept_id" name="department_id">
+                    <input type="hidden" id="department_name" name="department_name">    
                     <input type="text" id="dept_search" placeholder="Select or Add..." 
                         class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all cursor-pointer"
                         onclick="toggleDeptDropdown(true)">
@@ -87,9 +88,21 @@
                     </div>
                 </div>
             </div>
+            
+            <div class="flex gap-2 mb-2">
+                <button type="button" onclick="showCategoryMode()"
+                    class="px-3 py-1 text-xs font-bold bg-gray-200 rounded">
+                    CATEGORY
+                </button>
+
+                <button type="button" onclick="showGlobalGLMode()"
+                    class="px-3 py-1 text-xs font-bold bg-gray-200 rounded">
+                    GL CODE
+                </button>
+            </div>
 
             <!-- More Report Filter Labels Added Here -->
-            <div class="grid grid-cols-2 gap-3">
+            <div id="category_mode_section" class="grid grid-cols-2 gap-3">
                 <div class="relative" id="lvl4-wrapper">
                     <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1"> Level 4 Category</label>
                     <input type="text" id="lvl4_input"
@@ -128,6 +141,23 @@
                     </div>
                 </div>
             </div>
+
+            <div id="global_gl_section" class="hidden">
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">
+                    Assign GL Codes
+                </label>
+
+                <div class="relative">
+                    <input type="text" id="gl_global_only_search"
+                        onclick="handleGlobalGlClick()"
+                        placeholder="Search all GL codes..."
+                        class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg">
+
+                    <div id="gl_global_only_dropdown"
+                        class="absolute z-[100] w-full mt-1 bg-white border rounded-lg shadow max-h-48 overflow-y-auto hidden">
+                    </div>
+                </div>
+            </div>
             
             <div id="gl_tags_container" style="scrollbar-width: thin;"
                 class="flex flex-wrap gap-2 mt-1 max-h-20 overflow-y-auto border border-gray-200 rounded-lg p-2">
@@ -157,6 +187,15 @@
         document.getElementById('gl_dropdown').classList.toggle('hidden', !show);
     }
 
+
+    function toggleGlobalGlDropdown(show) {
+        const dropdown = document.getElementById('gl_global_only_dropdown');
+        if (!dropdown) return; // safety
+
+        dropdown.classList.toggle('hidden', !show);
+    }
+
+    
     function updateGlOptions() {
         const category = document.getElementById('level4_category').value;
         const optionsList = document.getElementById('gl_options_list');
@@ -189,18 +228,36 @@
         }
     }
 
+
     function toggleSelectAll() {
+
         const selectAll = document.getElementById('gl_select_all');
-        const checkboxes = document.querySelectorAll('.gl-checkbox');
-        checkboxes.forEach(cb => cb.checked = selectAll.checked);
-        updateGlTags();
+        const checkboxes = document.querySelectorAll('#gl_options_list .gl-checkbox');
+
+        checkboxes.forEach(cb => {
+            cb.checked = selectAll.checked;
+
+            const id = cb.value;
+
+            if (cb.checked) {
+                selectedGLs[id] = {
+                    id: id,
+                    code: cb.getAttribute('data-code'),
+                    title: cb.getAttribute('data-title')
+                };
+            } else {
+                delete selectedGLs[id];
+            }
+        });
+
+        renderGlTags();
     }
+
 
     function updateGlTags() {
 
-        const checkboxes = document.querySelectorAll('.gl-checkbox');
+        const checkboxes = document.querySelectorAll('#gl_options_list .gl-checkbox');
 
-        // ✅ Update state from currently visible checkboxes
         checkboxes.forEach(cb => {
 
             const id = cb.value;
@@ -216,7 +273,13 @@
             }
         });
 
-        // ✅ Rebuild UI from STATE (not DOM)
+        // 🔥 call renderer
+        renderGlTags();
+    }
+
+
+    function renderGlTags() {
+
         const container = document.getElementById('gl_tags_container');
         const hiddenInputs = document.getElementById('hidden_gl_inputs');
 
@@ -225,26 +288,47 @@
 
         Object.values(selectedGLs).forEach(gl => {
 
-            // UI tag
-            const tag = document.createElement('span');
-            tag.className = "bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-bold flex items-center gap-1";
-
+            // Render tag
+            const tag = document.createElement('div');
+            tag.className = "flex items-center gap-1 bg-gray-200 text-gray-700 px-2 py-1 rounded text-xs";
             tag.innerHTML = `
-                ${gl.code} - ${gl.title}
-                <button type="button" onclick="removeGl('${gl.id}')" class="ml-1 text-red-500">✕</button>
+                <span>${gl.code} - ${gl.title}</span>
+                <button type="button" onclick="removeGl('${gl.id}')" class="text-red-500 hover:text-red-700">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
             `;
 
             container.appendChild(tag);
 
-            // hidden input (for backend)
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'gl_codes[]';
-            input.value = gl.id;
-
-            hiddenInputs.appendChild(input);
+            // Hidden input for form submission
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'gl_codes[]';
+            hiddenInput.value = gl.id;
+            hiddenInputs.appendChild(hiddenInput);
         });
     }
+
+
+    function updateGlobalGlTags(checkbox) {
+
+        const id = checkbox.value;
+
+        if (checkbox.checked) {
+            selectedGLs[id] = {
+                id: id,
+                code: checkbox.getAttribute('data-code'),
+                title: checkbox.getAttribute('data-title')
+            };
+        } else {
+            delete selectedGLs[id];
+        }
+
+        renderGlTags(); // 🔥 reuse UI renderer
+    }
+
 
     // --- Department Search & Add Logic ---
     const deptSearch = document.getElementById('dept_search');
@@ -283,38 +367,53 @@
             e.preventDefault();
 
             const val = newDeptInput.value.trim();
+            if (!val) return;
 
-            if (val) {
-
-                document.getElementById('department_name').value = val;
-
-                const newId = 'new_' + Date.now();
-
-                const newDiv = document.createElement('div');
-                newDiv.className = "px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm";
-                newDiv.textContent = val;
-                newDiv.onclick = () => selectDept(newId, val);
-
-                deptOptions.prepend(newDiv);
-
-                newDeptInput.value = '';
-
-                addTrigger.classList.remove('hidden');
-                addInputContainer.classList.add('hidden');
-
-                selectDept(newId, val);
+            const deptNameInput = document.getElementById('department_name');
+            if (deptNameInput) {
+                deptNameInput.value = val;
             }
+
+            const newId = 'new_' + Date.now();
+
+            const newDiv = document.createElement('div');
+            newDiv.className = "px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm";
+            newDiv.textContent = val;
+            newDiv.onclick = () => selectDept(newId, val);
+
+            deptOptions.prepend(newDiv);
+
+            newDeptInput.value = '';
+
+            addTrigger.classList.remove('hidden');
+            addInputContainer.classList.add('hidden');
+
+            selectDept(newId, val);
         }
     }
 
     document.addEventListener('click', function(e) {
+
+        // DEPARTMENT
         if (!document.getElementById('dept-dropdown-wrapper').contains(e.target)) {
             toggleDeptDropdown(false);
         }
+
+        // OLD GL DROPDOWN (CATEGORY MODE)
         if (!document.getElementById('gl-dropdown-wrapper').contains(e.target)) {
             toggleGlDropdown(false);
         }
+
+        // ✅ NEW GLOBAL GL DROPDOWN (ADD THIS)
+        const globalWrapper = document.getElementById('global_gl_section');
+
+        if (globalWrapper && !globalWrapper.contains(e.target)) {
+            document.getElementById('gl_global_only_dropdown')
+                .classList.add('hidden');
+        }
+
     });
+
 
     function openModal(id) {
 
@@ -629,5 +728,119 @@
 
         toggleGlDropdown(true);
     }
+
+
+    function showCategoryMode() {
+    document.getElementById('category_mode_section').classList.remove('hidden');
+    document.getElementById('global_gl_section').classList.add('hidden');
+    }
+
+    function showGlobalGLMode() {
+        document.getElementById('category_mode_section').classList.add('hidden');
+        document.getElementById('global_gl_section').classList.remove('hidden');
+
+        loadAllGLCodes(); // 🔥 important
+    }
+
+
+    async function loadAllGLCodes() {
+
+        const res = await fetch('index.php?api=gl-codes');
+        const data = await res.json();
+
+        const container = document.getElementById('gl_global_only_dropdown');
+        container.innerHTML = '';
+
+        data.data.forEach(gl => {
+
+            const exists = selectedGLs[gl.id];
+
+            const div = document.createElement('div');
+            div.className = "px-3 py-2 flex gap-2";
+
+            div.innerHTML = `
+                <input type="checkbox"
+                    class="gl-checkbox gl-checkbox-global"
+                    onchange="updateGlobalGlTags(this)"
+                    value="${gl.id}"
+                    data-id="${gl.id}"
+                    data-code="${gl.gl_account}"
+                    data-title="${gl.account_title}"
+                    ${exists ? 'checked' : ''}
+                    onchange="updateGlTags()">
+                <span>${gl.gl_account} - ${gl.account_title}</span>
+            `;
+
+            container.appendChild(div);
+        });
+
+    }
+
+
+    document.getElementById('gl_global_only_search')
+    .addEventListener('input', function () {
+
+        const query = this.value.trim();
+
+        // 🔥 ALWAYS OPEN when typing
+        toggleGlobalGlDropdown(true);
+
+        if (query.length < 2) {
+            loadAllGLCodes();
+            return;
+        }
+
+        fetch('index.php?api=gl-search', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query })
+        })
+        .then(res => res.json())
+        .then(data => {
+
+            const container = document.getElementById('gl_global_only_dropdown');
+            container.innerHTML = '';
+
+            data.data.forEach(gl => {
+
+                const exists = selectedGLs[gl.id];
+
+                const div = document.createElement('div');
+                div.className = "px-3 py-2 flex gap-2";
+
+                div.innerHTML = `
+                    <input type="checkbox"
+                        class="gl-checkbox gl-checkbox-global"
+                        onchange="updateGlobalGlTags(this)"
+                        value="${gl.id}"
+                        data-id="${gl.id}"
+                        data-code="${gl.gl_account}"
+                        data-title="${gl.account_title}"
+                        ${exists ? 'checked' : ''}
+                        onchange="updateGlTags()">
+                    <span>${gl.gl_account} - ${gl.account_title}</span>
+                `;
+
+                container.appendChild(div);
+            });
+
+        });
+    });
+
+
+    
+    function handleGlobalGlClick() {
+
+        const input = document.getElementById('gl_global_only_search');
+        const query = input.value.trim();
+
+        // ✅ If no search → load all
+        if (query.length < 2) {
+            loadAllGLCodes();
+        }
+
+        toggleGlobalGlDropdown(true);
+    }
+
 
 </script>

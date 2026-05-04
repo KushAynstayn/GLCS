@@ -74,4 +74,20 @@ class ReportController extends Controller
         return $this->json($this->service->getAreas());
     }
 
+
+
+    public function getBranches()
+    {
+        return $this->json(
+            $this->service->getBranchList()
+        );
+    }
+
+    public function getTransactionTypes()
+    {
+        return $this->json(
+            $this->service->getTransactionTypeList()
+        );
+    }
+
 }

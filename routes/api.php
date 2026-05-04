@@ -122,6 +122,31 @@ switch ($action) {
         (new ReportController())->getGLCodes();
         break;
 
+    case 'user-getOne':
+        require_once __DIR__ . '/../app/Controllers/UserController.php';
+        (new UserController())->getOne();
+        break;
+
+    case 'user-update':
+        require_once __DIR__ . '/../app/Controllers/UserController.php';
+        (new UserController())->update();
+        break;
+
+    case 'user-resetPassword':
+        require_once __DIR__ . '/../app/Controllers/UserController.php';
+        (new UserController())->resetPassword();
+        break;
+
+    case 'branches':
+        require_once __DIR__ . '/../app/Controllers/ReportController.php';
+        (new ReportController())->getBranches();
+        break;
+
+    case 'transaction-types':
+        require_once __DIR__ . '/../app/Controllers/ReportController.php';
+        (new ReportController())->getTransactionTypes();
+        break;
+
     default:
         echo json_encode([
             'ok' => false,
