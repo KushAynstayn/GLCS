@@ -79,7 +79,7 @@
 
     
     <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    setTimeout(() => {
         const illustration = document.getElementById('illustration');
         if(illustration) {
             illustration.style.transition = 'opacity 1s ease-in-out';
@@ -88,7 +88,11 @@
                 illustration.classList.add('opacity-100');
             }, 100);
         }
-    });
+    }, 100);
     </script>
+
+    <?php include __DIR__ . '/../components/modals/force-change-password-modal.php'; ?>
+
+
 </body>
 </html>

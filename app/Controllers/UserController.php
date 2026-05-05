@@ -94,17 +94,32 @@ class UserController extends Controller {
 
 
 
+    public function changePassword()
+    {
+        session_start();
 
+        $input = json_decode(file_get_contents("php://input"), true);
 
+        $userId = $_SESSION['user']['id'] ?? null;
 
+        if (!$userId) {
+            return $this->json([
+                'ok' => false,
+                'message' => 'Unauthorized'
+            ]);
+        }
 
+        if (empty($input['password'])) {
+            return $this->json([
+                'ok' => false,
+                'message' => 'Password is required'
+            ]);
+        }
 
-
-
-
-
-
-
+        return $this->json(
+            $this->service->changePassword($userId, $input['password'])
+        );
+    }
 
 
 }

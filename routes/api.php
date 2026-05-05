@@ -137,6 +137,11 @@ switch ($action) {
         (new UserController())->resetPassword();
         break;
 
+    case 'change-password':
+        require_once __DIR__ . '/../app/Controllers/UserController.php';
+        (new UserController())->changePassword();
+        break;
+
     case 'branches':
         require_once __DIR__ . '/../app/Controllers/ReportController.php';
         (new ReportController())->getBranches();
