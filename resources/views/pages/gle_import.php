@@ -1,6 +1,7 @@
 <?php include __DIR__ . '/../components/modals/fetch_modal.php'; ?>
 <?php include __DIR__ . '/../components/modals/preview_modal.php'; ?>
 <?php include __DIR__ . '/../components/modals/insert_modal.php'; ?>
+<?php include __DIR__ . '/../components/modals/duplicate_modal.php'; ?>
 
 <div class="w-full mx-auto mb-4">
     <h1 class="text-3xl font-extrabold text-[#a61e22] tracking-tight">
@@ -270,7 +271,9 @@ function openInsertModal() {
 }
 
 
-async function startInsert() {
+let pendingInsert = null;
+
+async function startInsert(override = false) {
 
     let progressBar = document.getElementById("insertProgressBar");
     let progressText = document.getElementById("insertProgressText");
@@ -283,12 +286,29 @@ async function startInsert() {
         let res = await fetch("/GLCS/public/index.php?api=1&action=insert", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ file_keys: uploadedFileKeys })
+            body: JSON.stringify({ 
+                file_keys: uploadedFileKeys,
+                override: override
+            })
         });
 
         let data = await res.json();
+        console.log("INSERT RESPONSE:", data);
 
-        console.log("INSERT:", data);
+        if (data.duplicate) {
+
+            // reset progress UI
+            progressBar.style.width = "0%";
+            progressText.textContent = "Waiting for user action...";
+
+            // 🔥 CLOSE INSERT MODAL FIRST
+            closeInsertModal();
+
+            // 🔥 SHOW DUPLICATE MODAL
+            showDuplicateModal();
+
+            return;
+        }
 
         if (!data.ok) {
             throw new Error(data.message || "Insert failed");
@@ -302,7 +322,6 @@ async function startInsert() {
     } catch (err) {
 
         console.error(err);
-
         progressText.textContent = "Error occurred";
         alert("Insert failed: " + err.message);
     }
@@ -311,6 +330,22 @@ async function startInsert() {
 
 function closeInsertModal() {
     document.getElementById('insertModal').classList.add('hidden');
+}
+
+
+
+function showDuplicateModal() {
+    document.getElementById('duplicateModal').classList.remove('hidden');
+}
+
+function cancelDuplicate() {
+    document.getElementById('duplicateModal').classList.add('hidden');
+    closeInsertModal();
+}
+
+function confirmOverride() {
+    document.getElementById('duplicateModal').classList.add('hidden');
+    startInsert(true); // 🔥 retry with override
 }
 
 
