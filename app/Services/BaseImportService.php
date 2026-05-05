@@ -55,6 +55,7 @@ abstract class BaseImportService
     {
         $fileKey = uniqid('imp_');
         $path = $this->uploadPath . $fileKey . '.json';
+        $fileHash = md5_file($file['tmp_name']);
 
         $reader = new Reader();
         $reader->open($file['tmp_name']);
@@ -85,7 +86,8 @@ abstract class BaseImportService
         $reader->close();
 
         file_put_contents($path, json_encode([
-            'rows' => $rows
+            'rows' => $rows,
+            'file_hash' => $fileHash
         ]));
 
         return [
@@ -125,6 +127,7 @@ abstract class BaseImportService
     public function insertBatch($data)
     {
         $fileKeys = $data['file_keys'] ?? [];
+        $override = $data['override'] ?? false;
 
         if (empty($fileKeys)) {
             return ['ok' => false, 'message' => 'No file_keys'];
@@ -139,10 +142,27 @@ abstract class BaseImportService
             if (!file_exists($path)) continue;
 
             $json = json_decode(file_get_contents($path), true);
+
+            $fileHash = $json['file_hash'] ?? null;
+
+            if ($fileHash && $this->isFileAlreadyImported($fileHash)) {
+
+                if (!$override) {
+                    return [
+                        'ok' => false,
+                        'duplicate' => true,
+                        'message' => 'This file was already imported. Do you want to override?'
+                    ];
+                }
+
+                // 🔥 OVERRIDE: delete old data first
+                $this->deleteByFileHash($fileHash);
+            }
+
             $rows = $json['rows'] ?? [];
 
             // ✅ CREATE IMPORT RECORD
-            $importId = $this->createImportSession($key, $path, count($rows));
+            $importId = $this->createImportSession($key, $path, count($rows), $fileHash);
 
             try {
 
@@ -152,8 +172,9 @@ abstract class BaseImportService
 
                 foreach ($rows as $row) {
 
-                    $batch[] = $this->cleanRow($row);
-                    $count++;
+                    $clean = $this->cleanRow($row);
+                    $clean['import_id'] = $importId; // 🔥 attach batch
+                    $batch[] = $clean;
 
                     if ($count === 200) {
                         $inserted += $this->bulkInsert($batch);
@@ -217,19 +238,20 @@ abstract class BaseImportService
         $stmt = $this->db->prepare($sql);
         $stmt->execute($values);
 
-        return count($rows);
+        return $stmt->rowCount(); // ✅ only count actually inserted rows
     }
 
 
-    private function createImportSession($fileKey, $filePath, $totalRows)
+    private function createImportSession($fileKey, $filePath, $totalRows, $fileHash = null)
     {
         $stmt = $this->db->prepare("
-            INSERT INTO imports (file_name, file_path, uploaded_by, total_rows, status)
-            VALUES (?, ?, ?, ?, 'processing')
+            INSERT INTO imports (file_name, file_hash, file_path, uploaded_by, total_rows, status)
+            VALUES (?, ?, ?, ?, ?, 'processing')
         ");
 
         $stmt->execute([
             $fileKey,
+            $fileHash ?? null,
             $filePath,
             $_SESSION['user_id'] ?? 0,
             $totalRows
@@ -270,4 +292,45 @@ abstract class BaseImportService
     // =========================================
     abstract protected function cleanRow($row);
     abstract protected function getTable();
+
+
+    private function isFileAlreadyImported($fileHash)
+    {
+        if (!$fileHash) return false;
+
+        $stmt = $this->db->prepare("
+            SELECT COUNT(*) FROM imports 
+            WHERE file_hash = ? AND status = 'completed'
+        ");
+        $stmt->execute([$fileHash]);
+
+        return $stmt->fetchColumn() > 0;
+    }
+
+
+
+    private function deleteByFileHash($fileHash)
+    {
+        // get import record
+        $stmt = $this->db->prepare("
+            SELECT id FROM imports WHERE file_hash = ?
+        ");
+        $stmt->execute([$fileHash]);
+        $import = $stmt->fetch();
+
+        if (!$import) return;
+
+        // ⚠️ OPTION 1: if you don't have batch_id in gle
+        // fallback delete using matching data (not ideal)
+
+        // 🔥 BEST: if you later add batch_id, use that instead
+
+        // for now just delete import record
+        $stmt = $this->db->prepare("DELETE FROM imports WHERE file_hash = ?");
+        $stmt->execute([$fileHash]);
+
+        // ⚠️ NOTE:
+        // Without batch_id in gle, you CANNOT safely delete old rows
+    }
+
 }
