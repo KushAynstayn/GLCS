@@ -89,6 +89,16 @@ class GLCodeController extends Controller
 
     public function search()
     {
+        // ✅ SUPPORT GET (your modal)
+        if (isset($_GET['keyword'])) {
+            $keyword = $_GET['keyword'];
+
+            return $this->json(
+                $this->service->searchGLCodes($keyword)
+            );
+        }
+
+        // ✅ KEEP EXISTING POST (other system parts)
         $input = json_decode(file_get_contents("php://input"), true);
 
         return $this->json(

@@ -22,13 +22,15 @@
                     <div>
                         <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Main Zone</label>
                         <select id="mainZone" class="border border-gray-300 rounded-lg p-2 text-sm w-full outline-none focus:ring-1 focus:ring-red-500">
-                            <option value="">Select Main Zone</option>
+                            <option value="" disabled selected>Select Main Zone</option>
+                            <option value="ALL">ALL</option>
                         </select>
                     </div>
                     <div>
                         <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Zone</label>
                         <select id="zone" class="border border-gray-300 rounded-lg p-2 text-sm w-full outline-none focus:ring-1 focus:ring-red-500">
-                            <option value="">Select Zone</option>
+                            <option value="" disabled selected>Select Zone</option>
+                            <option value="ALL">ALL</option>
                         </select>
                     </div>
                 </div>
@@ -38,13 +40,15 @@
                     <div>
                         <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Region</label>
                         <select id="region" class="border border-gray-300 rounded-lg p-2 text-sm w-full outline-none focus:ring-1 focus:ring-red-500">
-                            <option value="">Select Region</option>
+                            <option value="" disabled selected>Select Region</option>
+                            <option value="ALL">ALL</option>
                         </select>
                     </div>
                     <div>
                         <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Area</label>
                         <select id="area" class="border border-gray-300 rounded-lg p-2 text-sm w-full outline-none focus:ring-1 focus:ring-red-500">
-                            <option value="">Select Area</option>
+                            <option value="" disabled selected>Select Area</option>
+                            <option value="ALL">ALL</option>
                         </select>
                     </div>
                 </div>
@@ -66,16 +70,72 @@
             <div class="grid grid-cols-2 gap-3">
                 <div>
                     <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">GL Account</label>
-                    <input id="glInput" list="gl_list" class="w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-1 focus:ring-red-500 outline-none transition-all" placeholder="Search or pick GL Code...">
+                    <input id="glInput" list="gl_list" class="w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-1 focus:ring-red-500 outline-none transition-all" placeholder="Search GL Code...">
                     <datalist id="gl_list"></datalist>
                 </div>
                 <div>
-                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Partner Details</label>
+                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Partner</label>
                     <input id="partnerInput" list="partner_list" class="w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-1 focus:ring-red-500 outline-none transition-all" placeholder="Search Partner...">
                     <datalist id="partner_list"></datalist>
                 </div>
             </div>
+
+
+            <!-- NEW DOUBLE PURPOSE FILTERS -->
+            <div class="grid grid-cols-2 gap-3">
+
+                <!-- BRANCH -->
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">
+                        Branch
+                    </label>
+                    <input
+                        id="branchInput"
+                        list="branch_list"
+                        class="w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-1 focus:ring-red-500 outline-none transition-all"
+                        placeholder="Search Branch..."
+                    >
+                    <datalist id="branch_list"></datalist>
+                </div>
+
+
+                <!-- CURRENCY (fixed dropdown values but still searchable style) -->
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">
+                        Currency
+                    </label>
+                    <input
+                        id="currencyInput"
+                        list="currency_list"
+                        class="w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-1 focus:ring-red-500 outline-none transition-all"
+                        placeholder="Search Currency Type..."
+                    >
+                    <datalist id="currency_list">
+                        <option value="PHP"></option>
+                        <option value="USD"></option>
+                        <option value="EUR"></option>
+                        <option value="JPY"></option>
+                        <option value="GBP"></option>
+                    </datalist>
+                </div>
+
+                <!-- TRANSACTION TYPE -->
+                <div class="col-span-2">
+                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">
+                        Transaction Type
+                    </label>
+                    <input
+                        id="transactionTypeInput"
+                        list="transaction_type_list"
+                        class="w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-1 focus:ring-red-500 outline-none transition-all"
+                        placeholder="Search Transaction Type..."
+                    >
+                    <datalist id="transaction_type_list"></datalist>
+                </div>
+
+            </div>
         </div>
+        
 
         <!-- Footer Actions -->
         <div class="flex gap-2 justify-end p-4 mt-1 border-t border-gray-100">

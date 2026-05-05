@@ -49,4 +49,62 @@ class UserController extends Controller {
             $this->service->createUser($input)
         );
     }
+
+    
+
+    // =========================================
+    // API: GET SINGLE USER
+    // =========================================
+    public function getOne()
+    {
+        $id = $_GET['id'] ?? null;
+
+        if (!$id) {
+            return $this->json(['ok' => false, 'message' => 'User ID required']);
+        }
+
+        return $this->json(
+            $this->service->getUserWithGL($id)
+        );
+    }
+
+    // =========================================
+    // API: UPDATE USER
+    // =========================================
+    public function update()
+    {
+        $input = json_decode(file_get_contents("php://input"), true);
+
+        return $this->json(
+            $this->service->updateUser($input)
+        );
+    }
+
+    // =========================================
+    // API: RESET PASSWORD
+    // =========================================
+    public function resetPassword()
+    {
+        $input = json_decode(file_get_contents("php://input"), true);
+
+        return $this->json(
+            $this->service->resetPassword($input['user_id'])
+        );
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

@@ -33,6 +33,10 @@ class ReportService
         $region = $input['region'] ?? '';
         $area = $input['area'] ?? '';
 
+        $branch = $input['branch'] ?? '';
+        $transactionType = $input['transaction_type'] ?? '';
+        $currency = $input['currency'] ?? '';
+
         $page = $input['page'] ?? 1;
 
         $limit = 20;
@@ -62,27 +66,45 @@ class ReportService
 
 
         // 🔹 MAIN ZONE
-        if ($mainZone) {
+        if ($mainZone && $mainZone !== 'ALL') {
             $sql .= " AND main_zone = ?";
             $params[] = $mainZone;
         }
 
         // 🔹 ZONE
-        if ($zone) {
+        if ($zone && $zone !== 'ALL') {
             $sql .= " AND zone = ?";
             $params[] = $zone;
         }
 
         // 🔹 REGION
-        if ($region) {
+        if ($region && $region !== 'ALL') {
             $sql .= " AND region = ?";
             $params[] = $region;
         }
 
         // 🔹 AREA
-        if ($area) {
+        if ($area && $area !== 'ALL') {
             $sql .= " AND area = ?";
             $params[] = $area;
+        }
+
+        // 🔹 BRANCH (cost_center)
+        if ($branch) {
+            $sql .= " AND cost_center LIKE ?";
+            $params[] = "%$branch%";
+        }
+
+        // 🔹 TRANSACTION TYPE
+        if ($transactionType) {
+            $sql .= " AND transaction_type LIKE ?";
+            $params[] = "%$transactionType%";
+        }
+
+        // 🔹 CURRENCY
+        if ($currency) {
+            $sql .= " AND currency LIKE ?";
+            $params[] = "%$currency%";
         }
 
         // 🔥 USER ACCESS CONTROL
@@ -139,6 +161,47 @@ class ReportService
         ];
     }
 
+
+    // =========================
+    // BRANCH LIST (cost_center)
+    // =========================
+    public function getBranchList()
+    {
+        $stmt = $this->db->query("
+            SELECT DISTINCT cost_center AS branch
+            FROM gle
+            WHERE cost_center IS NOT NULL
+            AND cost_center != ''
+            ORDER BY cost_center ASC
+            LIMIT 200
+        ");
+
+        return [
+            'ok' => true,
+            'data' => $stmt->fetchAll(PDO::FETCH_COLUMN)
+        ];
+    }
+
+    // =========================
+    // TRANSACTION TYPE LIST
+    // =========================
+    public function getTransactionTypeList()
+    {
+        $stmt = $this->db->query("
+            SELECT DISTINCT transaction_type
+            FROM gle
+            WHERE transaction_type IS NOT NULL
+            AND transaction_type != ''
+            ORDER BY transaction_type ASC
+            LIMIT 200
+        ");
+
+        return [
+            'ok' => true,
+            'data' => $stmt->fetchAll(PDO::FETCH_COLUMN)
+        ];
+    }
+
     // =========================
     // GL CODES (WITH ACCESS CONTROL)
     // =========================
@@ -186,13 +249,22 @@ class ReportService
     // =========================
     public function getZones($mainZone)
     {
-        $stmt = $this->master->prepare("
-            SELECT zone_code, zone_description
-            FROM zone_masterfile
-            WHERE main_zone_code = ?
-            ORDER BY zone_code
-        ");
-        $stmt->execute([$mainZone]);
+        if (empty($mainZone)) {
+            // 🔥 ALL → return ALL zones
+            $stmt = $this->master->query("
+                SELECT zone_code, zone_description
+                FROM zone_masterfile
+                ORDER BY zone_code
+            ");
+        } else {
+            $stmt = $this->master->prepare("
+                SELECT zone_code, zone_description
+                FROM zone_masterfile
+                WHERE main_zone_code = ?
+                ORDER BY zone_code
+            ");
+            $stmt->execute([$mainZone]);
+        }
 
         return ['ok' => true, 'data' => $stmt->fetchAll()];
     }
@@ -202,13 +274,22 @@ class ReportService
     // =========================
     public function getRegions($zone)
     {
-        $stmt = $this->master->prepare("
-            SELECT region_code, region_description
-            FROM region_masterfile
-            WHERE zone_code = ?
-            ORDER BY region_description
-        ");
-        $stmt->execute([$zone]);
+        if (empty($zone)) {
+            // 🔥 ALL → return ALL regions
+            $stmt = $this->master->query("
+                SELECT region_code, region_description
+                FROM region_masterfile
+                ORDER BY region_description
+            ");
+        } else {
+            $stmt = $this->master->prepare("
+                SELECT region_code, region_description
+                FROM region_masterfile
+                WHERE zone_code = ?
+                ORDER BY region_description
+            ");
+            $stmt->execute([$zone]);
+        }
 
         return ['ok' => true, 'data' => $stmt->fetchAll()];
     }

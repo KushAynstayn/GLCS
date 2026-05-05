@@ -131,4 +131,114 @@ class UserService
             ];
         }
     }
+
+
+
+    public function getUserWithGL($userId)
+    {
+        $stmt = $this->db->prepare("
+            SELECT u.*, r.name as role_name
+            FROM users u
+            LEFT JOIN roles r ON u.role_id = r.id
+            WHERE u.id = ?
+        ");
+        $stmt->execute([$userId]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $stmt = $this->db->prepare("
+            SELECT g.id, g.gl_account, g.account_title
+            FROM user_gl_access uga
+            JOIN gl_codes g ON g.id = uga.gl_code_id
+            WHERE uga.user_id = ?
+        ");
+        $stmt->execute([$userId]);
+
+        $user['gl_codes'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return ['ok' => true, 'data' => $user];
+    }
+   
+
+    public function updateUser($data)
+    {
+        try {
+
+            $this->db->beginTransaction();
+
+            $userId = $data['id'];
+
+            $username = $data['username'] ?? null;
+
+            if (!$username) {
+                $username = strtoupper($data['lastname']) . $data['id_number'];
+            }
+
+            $stmt = $this->db->prepare("
+                UPDATE users SET
+                    id_number = ?,
+                    username = ?,
+                    first_name = ?,
+                    middle_name = ?,
+                    last_name = ?,
+                    role_id = ?,
+                    status = ?
+                WHERE id = ?
+            ");
+
+            $stmt->execute([
+                $data['id_number'],
+                $username,
+                $data['firstname'],
+                $data['middlename'] ?? null,
+                $data['lastname'],
+                $data['role_id'],
+                $data['status'],
+                $userId
+            ]);
+
+            // 🔥 RESET GL ACCESS
+            $this->db->prepare("DELETE FROM user_gl_access WHERE user_id = ?")
+                    ->execute([$userId]);
+
+            if (!empty($data['gl_codes'])) {
+
+                $stmt = $this->db->prepare("
+                    INSERT INTO user_gl_access (user_id, gl_code_id)
+                    VALUES (?, ?)
+                ");
+
+                foreach ($data['gl_codes'] as $gl) {
+                    $stmt->execute([$userId, (int)$gl]);
+                }
+            }
+
+            $this->db->commit();
+
+            return ['ok' => true];
+
+        } catch (Exception $e) {
+
+            $this->db->rollBack();
+
+            return [
+                'ok' => false,
+                'message' => $e->getMessage()
+            ];
+        }
+    }
+
+
+    public function resetPassword($userId)
+    {
+        $password = password_hash('Mlinc12345!@', PASSWORD_BCRYPT);
+
+        $stmt = $this->db->prepare("
+            UPDATE users SET password = ? WHERE id = ?
+        ");
+
+        $stmt->execute([$password, $userId]);
+
+        return ['ok' => true];
+    }
+
 }
