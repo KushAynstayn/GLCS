@@ -102,6 +102,21 @@ class ReportController extends Controller
         }
 
         $rows = $result['data'] ?? [];
+        $type = strtolower($input['type'] ?? 'excel');
+
+        if ($type === 'pdf') {
+            $filename = 'GLE_Report_' . date('Ymd_His') . '.pdf';
+
+            header('Content-Type: application/pdf');
+            header('Content-Disposition: attachment; filename="' . $filename . '"');
+            header('Cache-Control: no-cache, no-store, must-revalidate');
+            header('Pragma: no-cache');
+            header('Expires: 0');
+
+            echo $this->buildPdfDocument($rows, $input);
+            exit;
+        }
+
         $filename = 'GLE_Report_' . date('Ymd_His') . '.xls';
 
         header('Content-Type: application/vnd.ms-excel');
@@ -234,6 +249,121 @@ class ReportController extends Controller
         $html .= '</tbody></table></body></html>';
 
         return $html;
+    }
+
+    private function buildPdfDocument($rows, $input = [])
+    {
+        if (!class_exists('TCPDF')) {
+            require_once __DIR__ . '/../../vendor/tecnickcom/tcpdf/tcpdf.php';
+        }
+
+        $totalDebit = 0;
+        $totalCredit = 0;
+        foreach ($rows as $row) {
+            $totalDebit += floatval($row['debit'] ?? 0);
+            $totalCredit += floatval($row['credit'] ?? 0);
+        }
+
+        $filterLines = $this->buildFilterSummary($input);
+        $generatedAt = date('m/d/Y H:i');
+
+        $html = '<style>';
+        $html .= 'body { font-family: arial,helvetica,sans-serif; font-size: 8pt; }';
+        $html .= 'h1 { font-size: 14pt; color: #D50000; margin-bottom: 2px; }';
+        $html .= '.stats-container { font-size: 7pt; color: #333; margin-top: 2px; margin-bottom: 10px; }';
+        // Added margin-bottom to filters-table to move data table down
+        $html .= '.filters-table { margin-bottom: 30px; width: 100%; }';
+        $html .= '.filters-table td { padding: 1px 0; font-size: 7pt; }';
+        $html .= '.data-table { border-collapse: collapse; width: 100%; }'; 
+        $html .= '.data-table th, .data-table td { border: 0.1pt solid #444; padding: 3px; font-size: 6pt; text-align: center; }';
+        $html .= '.ref-cell { white-space: nowrap; }';
+        $html .= '.no-data { color: #999; text-align: center; padding: 20px; }';
+        $html .= '</style>';
+
+        $html .= '<div style="text-align:center;">';
+        $html .= '<h1>General Ledger Extraction Report</h1>';
+        $html .= '<div class="stats-container">';
+        $html .= 'RECORDS: ' . count($rows) . ' &nbsp; | &nbsp; ';
+        $html .= 'DEBIT: ' . number_format($totalDebit, 2) . ' &nbsp; | &nbsp; ';
+        $html .= 'CREDIT: ' . number_format($totalCredit, 2) . ' &nbsp; | &nbsp; ';
+        $html .= 'GENERATED: ' . $generatedAt;
+        $html .= '</div>';
+        $html .= '</div>';
+
+        if (!empty($filterLines)) {
+            $html .= '<table class="filters-table">';
+            foreach ($filterLines as $label => $value) {
+                $html .= '<tr>';
+                $html .= '<td style="width:15%; font-weight:bold;">' . htmlspecialchars($label) . ':</td>'; 
+                $html .= '<td style="width:85%;">' . htmlspecialchars($value) . '</td>';
+                $html .= '</tr>';
+            }
+            $html .= '</table>';
+        }
+        
+        // Added more breaks for extra downward clearance
+        $html .= '<br><br><br>';
+
+        $w = [
+            'dt' => '9%', 'gc' => '6%', 'gd' => '10%', 'de' => '10%', 'rf' => '13%', 
+            'en' => '10%', 'cu' => '4%', 'db' => '7%', 'cr' => '7%', 'ty' => '8%', 
+            'br' => '5%', 'cc' => '6%', 'it' => '5%'
+        ];
+
+        $html .= '<table class="data-table" cellpadding="2">';
+        $html .= '<thead><tr>';
+        $html .= '<th style="width:'.$w['dt'].'; background-color:#D50000; color:#FFFFFF; font-weight:bold;">Date Time</th>';
+        $html .= '<th style="width:'.$w['gc'].'; background-color:#D50000; color:#FFFFFF; font-weight:bold;">GL Code</th>';
+        $html .= '<th style="width:'.$w['gd'].'; background-color:#D50000; color:#FFFFFF; font-weight:bold;">GL Description</th>';
+        $html .= '<th style="width:'.$w['de'].'; background-color:#D50000; color:#FFFFFF; font-weight:bold;">Description</th>';
+        $html .= '<th style="width:'.$w['rf'].'; background-color:#D50000; color:#FFFFFF; font-weight:bold;">Reference</th>';
+        $html .= '<th style="width:'.$w['en'].'; background-color:#D50000; color:#FFFFFF; font-weight:bold;">Entry Number</th>';
+        $html .= '<th style="width:'.$w['cu'].'; background-color:#D50000; color:#FFFFFF; font-weight:bold;">Cur</th>';
+        $html .= '<th style="width:'.$w['db'].'; background-color:#D50000; color:#FFFFFF; font-weight:bold;">Debit</th>';
+        $html .= '<th style="width:'.$w['cr'].'; background-color:#D50000; color:#FFFFFF; font-weight:bold;">Credit</th>';
+        $html .= '<th style="width:'.$w['ty'].'; background-color:#D50000; color:#FFFFFF; font-weight:bold;">Transaction Type</th>';
+        $html .= '<th style="width:'.$w['br'].'; background-color:#D50000; color:#FFFFFF; font-weight:bold;">Branch</th>';
+        $html .= '<th style="width:'.$w['cc'].'; background-color:#D50000; color:#FFFFFF; font-weight:bold;">Cost Center</th>';
+        $html .= '<th style="width:'.$w['it'].'; background-color:#D50000; color:#FFFFFF; font-weight:bold;">Item</th>';
+        $html .= '</tr></thead>';
+
+        $html .= '<tbody>';
+        if (empty($rows)) {
+            $html .= '<tr><td class="no-data" colspan="13">No records found</td></tr>';
+        } else {
+            foreach ($rows as $row) {
+                $html .= '<tr>';
+                $html .= '<td style="width:'.$w['dt'].';">' . htmlspecialchars($this->formatDate($row['datetime'] ?? '')) . '</td>';
+                $html .= '<td style="width:'.$w['gc'].';">' . htmlspecialchars($row['gl_code'] ?? '') . '</td>';
+                $html .= '<td style="width:'.$w['gd'].';">' . htmlspecialchars($row['gl_desc'] ?? '') . '</td>';
+                $html .= '<td style="width:'.$w['de'].';">' . htmlspecialchars($row['desc'] ?? '') . '</td>';
+                $html .= '<td style="width:'.$w['rf'].';" class="ref-cell">' . htmlspecialchars($row['reference'] ?? '') . '</td>';
+                $html .= '<td style="width:'.$w['en'].';">' . htmlspecialchars($row['entry_number'] ?? '') . '</td>';
+                $html .= '<td style="width:'.$w['cu'].';">' . htmlspecialchars($row['currency'] ?? '') . '</td>';
+                $html .= '<td style="width:'.$w['db'].';">' . htmlspecialchars($this->formatNumber($row['debit'] ?? '')) . '</td>';
+                $html .= '<td style="width:'.$w['cr'].';">' . htmlspecialchars($this->formatNumber($row['credit'] ?? '')) . '</td>';
+                $html .= '<td style="width:'.$w['ty'].';">' . htmlspecialchars($row['transaction_type'] ?? '') . '</td>';
+                $html .= '<td style="width:'.$w['br'].';">' . htmlspecialchars($row['branch_id'] ?? '') . '</td>';
+                $html .= '<td style="width:'.$w['cc'].';">' . htmlspecialchars($row['cost_center'] ?? '') . '</td>';
+                $html .= '<td style="width:'.$w['it'].';">' . htmlspecialchars($row['item'] ?? '') . '</td>';
+                $html .= '</tr>';
+            }
+        }
+        $html .= '</tbody></table>';
+
+        $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
+        $pdf->SetCreator(PDF_CREATOR);
+        $pdf->SetAuthor('GLCS');
+        $pdf->SetTitle('General Ledger Extraction Report');
+        $pdf->SetSubject('General Ledger Extraction Report');
+        $pdf->SetMargins(10, 10, 10);
+        $pdf->SetAutoPageBreak(true, 10);
+        $pdf->setPrintHeader(false);
+        $pdf->setPrintFooter(false);
+        $pdf->AddPage();
+        $pdf->writeHTML($html, true, false, true, false, '');
+
+        return $pdf->Output('', 'S');
     }
 
     private function buildFilterSummary($input)
