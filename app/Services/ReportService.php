@@ -295,6 +295,103 @@ class ReportService
     }
 
     // =========================
+    // GLE EXCEL EXPORT (NO PAGINATION)
+    // =========================
+    public function getPartnerReportForExport($input)
+    {
+        session_start();
+
+        $userId = $_SESSION['user']['id'] ?? 0;
+        $role = $_SESSION['user']['role_name'] ?? '';
+
+        $partner = $input['partner'] ?? '';
+        $glCode = $input['gl_code'] ?? '';
+        $dateFrom = $input['date_from'] ?? null;
+        $dateTo = $input['date_to'] ?? null;
+
+        $mainZone = $input['main_zone'] ?? '';
+        $zone = $input['zone'] ?? '';
+        $region = $input['region'] ?? '';
+        $area = $input['area'] ?? '';
+
+        $branch = $input['branch'] ?? '';
+        $transactionType = $input['transaction_type'] ?? '';
+        $currency = $input['currency'] ?? '';
+
+        $sql = "FROM gle WHERE 1=1";
+        $params = [];
+
+        if ($partner) {
+            $sql .= " AND `desc` LIKE ?";
+            $params[] = "%$partner%";
+        }
+
+        if ($dateFrom && $dateTo) {
+            $sql .= " AND datetime BETWEEN ? AND ?";
+            $params[] = $dateFrom;
+            $params[] = $dateTo;
+        }
+
+        if (!empty($glCode)) {
+            $sql .= " AND TRIM(gl_code) = ?";
+            $params[] = trim($glCode);
+        }
+
+        if ($mainZone && $mainZone !== 'ALL') {
+            $sql .= " AND main_zone = ?";
+            $params[] = $mainZone;
+        }
+
+        if ($zone && $zone !== 'ALL') {
+            $sql .= " AND zone = ?";
+            $params[] = $zone;
+        }
+
+        if ($region && $region !== 'ALL') {
+            $sql .= " AND region = ?";
+            $params[] = $region;
+        }
+
+        if ($area && $area !== 'ALL') {
+            $sql .= " AND area = ?";
+            $params[] = $area;
+        }
+
+        if ($branch) {
+            $sql .= " AND cost_center LIKE ?";
+            $params[] = "%$branch%";
+        }
+
+        if ($transactionType) {
+            $sql .= " AND transaction_type LIKE ?";
+            $params[] = "%$transactionType%";
+        }
+
+        if ($currency) {
+            $sql .= " AND currency LIKE ?";
+            $params[] = "%$currency%";
+        }
+
+        if (strtolower($role) !== 'admin') {
+            $sql .= " AND gl_code IN (
+                SELECT gl_account
+                FROM gl_codes gc
+                JOIN user_gl_access uga ON uga.gl_code_id = gc.id
+                WHERE uga.user_id = ?
+            )";
+            $params[] = $userId;
+        }
+
+        $stmt = $this->db->prepare("SELECT * $sql ORDER BY datetime DESC");
+        $stmt->execute($params);
+
+        return [
+            'ok' => true,
+            'data' => $stmt->fetchAll()
+        ];
+    }
+
+    // =========================
     // AREAS
     // =========================
     public function getAreas()
