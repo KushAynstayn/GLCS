@@ -3,7 +3,8 @@
     "description": "General Ledger Consolidated System",
     "type": "project",
     "require": {
-        "openspout/openspout": "^4.15"
+        "openspout/openspout": "^4.15",
+        "tecnickcom/tcpdf": "^6.11"
     },
     "autoload": {
         "psr-4": {

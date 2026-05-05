@@ -253,10 +253,7 @@ class ReportController extends Controller
 
     private function buildPdfDocument($rows, $input = [])
     {
-        if (!class_exists('TCPDF')) {
-            require_once __DIR__ . '/../../vendor/tecnickcom/tcpdf/tcpdf.php';
-        }
-
+        
         $totalDebit = 0;
         $totalCredit = 0;
         foreach ($rows as $row) {
@@ -352,7 +349,7 @@ class ReportController extends Controller
         $html .= '</tbody></table>';
 
         $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
-        $pdf->SetCreator(PDF_CREATOR);
+        $pdf->SetCreator('GLCS');
         $pdf->SetAuthor('GLCS');
         $pdf->SetTitle('General Ledger Extraction Report');
         $pdf->SetSubject('General Ledger Extraction Report');
