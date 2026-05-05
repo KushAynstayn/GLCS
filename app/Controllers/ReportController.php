@@ -90,4 +90,192 @@ class ReportController extends Controller
         );
     }
 
+    public function downloadGLE()
+    {
+        $input = $_GET;
+
+        $result = $this->service->getPartnerReportForExport($input);
+
+        if (!$result['ok']) {
+            echo json_encode($result);
+            return;
+        }
+
+        $rows = $result['data'] ?? [];
+        $filename = 'GLE_Report_' . date('Ymd_His') . '.xls';
+
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Cache-Control: no-cache, no-store, must-revalidate');
+        header('Pragma: no-cache');
+        header('Expires: 0');
+
+        echo $this->buildHtmlTable($rows, $input);
+        exit;
+    }
+
+    private function buildHtmlTable($rows, $input = [])
+    {
+        $headers = [
+            'Date Time',
+            'GL Code',
+            'GL Description',
+            'Description',
+            'Reference',
+            'Entry Number',
+            'Currency',
+            'Debit',
+            'Credit',
+            'Transaction Type',
+            'Branch ID',
+            'Cost Center',
+            'Item',
+        ];
+
+        $filterLines = $this->buildFilterSummary($input);
+        $generatedAt = date('m/d/Y H:i');
+
+        $totalDebit  = 0;
+        $totalCredit = 0;
+        foreach ($rows as $row) {
+            $totalDebit  += floatval($row['debit']  ?? 0);
+            $totalCredit += floatval($row['credit'] ?? 0);
+        }
+
+        $html = '<html xmlns:o="urn:schemas-microsoft-com:office:office" '
+              . 'xmlns:x="urn:schemas-microsoft-com:office:excel" '
+              . 'xmlns="http://www.w3.org/TR/REC-html40">';
+        $html .= '<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">';
+        $html .= '<xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>';
+        $html .= '<x:Name>GLE Report</x:Name>';
+        $html .= '<x:WorksheetOptions>';
+        $html .= '<x:Print><x:ValidPrinterInfo/></x:Print>';
+        $html .= '</x:WorksheetOptions>';
+        $html .= '</x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml>';
+        
+        $html .= '<style>';
+        $html .= 'body { font-family: Arial, sans-serif; }';
+        $html .= 'th { background-color:#D50000; color:#FFFFFF; border: 0.5pt solid #000000; font-family: Arial; font-size: 11px; height: 25px; text-align:center; }';
+        $html .= 'td { font-family: Arial; font-size: 10px; border: 0.5pt solid #000000; text-align: center; }';
+        $html .= '.stat-label { font-size:10px; color:#888; font-weight:bold; }';
+        $html .= '.stat-value { font-size:11px; color:#000; font-weight:bold; }';
+        $html .= '.stat-value-red { font-size:11px; color:#D50000; font-weight:bold; }';
+        $html .= '.filter-label { font-size:11px; color:#666; font-weight:bold; border:none; text-align: left; }';
+        $html .= '.filter-value { font-size:11px; color:#D50000; border:none; text-align: left; }';
+        $html .= '.title-text { font-size:16px; font-weight:bold; color:#D50000; text-align:center; }';
+        $html .= '</style></head><body>';
+
+        $html .= '<table style="border-collapse:collapse;">';
+
+        // ── LINE 1: BLANK ROW (To push everything down) ──
+        $html .= '<tr><td colspan="13" style="border:none; height:20px;"></td></tr>';
+
+        // ── LINE 2: TITLE ──
+        $html .= '<tr>';
+        $html .= '<td colspan="5" style="border:none;"></td>';
+        $html .= '<td colspan="2" class="title-text" style="padding:10px 0; border:none;">General Ledger Extraction Report</td>';
+        $html .= '<td colspan="6" style="border:none;"></td>';
+        $html .= '</tr>';
+
+        // ── LINE 3: STATS BAR ──
+        $html .= '<tr>';
+        $html .= '<td colspan="4" style="border:none;"></td>'; 
+        $html .= '<td style="text-align:center; padding:5px; border:none;"><span class="stat-label">TOTAL RECORDS: </span><span class="stat-value">' . count($rows) . '</span></td>';
+        $html .= '<td style="text-align:center; padding:5px; border:none;"><span class="stat-label">TOTAL DEBIT: </span><span class="stat-value">' . number_format($totalDebit, 2) . '</span></td>';
+        $html .= '<td style="text-align:center; padding:5px; border:none;"><span class="stat-label">TOTAL CREDIT: </span><span class="stat-value-red">' . number_format($totalCredit, 2) . '</span></td>';
+        $html .= '<td style="text-align:center; padding:5px; border:none;"><span class="stat-label">GENERATED: </span><span class="stat-value">' . $generatedAt . '</span></td>';
+        $html .= '<td colspan="5" style="border:none;"></td>';
+        $html .= '</tr>';
+
+        // ── LINE 4 ONWARDS: VERTICAL FILTERS (Column A and B) ──
+        if (!empty($filterLines)) {
+            foreach ($filterLines as $label => $value) {
+                $html .= '<tr>';
+                $html .= '<td class="filter-label" style="border:none;">' . htmlspecialchars($label) . ':</td>';
+                $html .= '<td class="filter-value" style="border:none;">' . htmlspecialchars($value) . '</td>';
+                $html .= '<td colspan="11" style="border:none;"></td>';
+                $html .= '</tr>';
+            }
+        }
+
+        // Space before table
+        $html .= '<tr><td colspan="13" style="border:none; height:10px;"></td></tr>';
+
+        // ── DATA TABLE HEADER ──
+        $html .= '<thead><tr>';
+        foreach ($headers as $h) {
+            $html .= '<th style="background-color:#D50000; color:#FFFFFF; padding:7px 10px; font-weight:bold; white-space:nowrap; text-align:center; border: 0.5pt solid #000000;">' . htmlspecialchars($h) . '</th>';
+        }
+        $html .= '</tr></thead>';
+
+        // ── DATA ROWS ──
+        $html .= '<tbody>';
+        if (empty($rows)) {
+            $html .= '<tr><td colspan="13" style="padding:20px; text-align:center; color:#ccc;">No records found</td></tr>';
+        } else {
+            foreach ($rows as $row) {
+                $html .= '<tr>';
+                $html .= '<td style="padding:5px; border: 0.5pt solid #000000;">' . htmlspecialchars($this->formatDate($row['datetime'] ?? '')) . '</td>';
+                $html .= '<td style="padding:5px; border: 0.5pt solid #000000;">' . htmlspecialchars($row['gl_code'] ?? '') . '</td>';
+                $html .= '<td style="padding:5px; border: 0.5pt solid #000000;">' . htmlspecialchars($row['gl_desc'] ?? '') . '</td>';
+                $html .= '<td style="padding:5px; border: 0.5pt solid #000000;">' . htmlspecialchars($row['desc'] ?? '') . '</td>';
+                $html .= '<td style="padding:5px; border: 0.5pt solid #000000;">' . htmlspecialchars($row['reference'] ?? '') . '</td>';
+                $html .= '<td style="padding:5px; border: 0.5pt solid #000000;">' . htmlspecialchars($row['entry_number'] ?? '') . '</td>';
+                $html .= '<td style="padding:5px; border: 0.5pt solid #000000;">' . htmlspecialchars($row['currency'] ?? '') . '</td>';
+                $html .= '<td style="padding:5px; border: 0.5pt solid #000000;">' . htmlspecialchars($this->formatNumber($row['debit'] ?? '')) . '</td>';
+                $html .= '<td style="padding:5px; border: 0.5pt solid #000000;">' . htmlspecialchars($this->formatNumber($row['credit'] ?? '')) . '</td>';
+                $html .= '<td style="padding:5px; border: 0.5pt solid #000000;">' . htmlspecialchars($row['transaction_type'] ?? '') . '</td>';
+                $html .= '<td style="padding:5px; border: 0.5pt solid #000000;">' . htmlspecialchars($row['branch_id'] ?? '') . '</td>';
+                $html .= '<td style="padding:5px; border: 0.5pt solid #000000;">' . htmlspecialchars($row['cost_center'] ?? '') . '</td>';
+                $html .= '<td style="padding:5px; border: 0.5pt solid #000000;">' . htmlspecialchars($row['item'] ?? '') . '</td>';
+                $html .= '</tr>';
+            }
+        }
+        $html .= '</tbody></table></body></html>';
+
+        return $html;
+    }
+
+    private function buildFilterSummary($input)
+    {
+        $labels = [
+            'partner'          => 'Partner',
+            'gl_code'          => 'GL Code',
+            'date_from'        => 'Date From',
+            'date_to'          => 'Date To',
+            'main_zone'        => 'Main Zone',
+            'zone'             => 'Zone',
+            'region'           => 'Region',
+            'area'             => 'Area',
+            'branch'           => 'Branch',
+            'transaction_type' => 'Transaction Type',
+            'currency'         => 'Currency',
+        ];
+
+        $filters = [];
+        foreach ($labels as $key => $label) {
+            if (!empty($input[$key])) {
+                $val = $input[$key];
+                if (($key === 'date_from' || $key === 'date_to') && preg_match('/^\d{4}-\d{2}-\d{2}$/', $val)) {
+                    $val = date('M d, Y', strtotime($val));
+                }
+                $filters[$label] = $val;
+            }
+        }
+        return $filters;
+    }
+
+    private function formatDate($datetime)
+    {
+        if (!$datetime) return '';
+        $d = new DateTime($datetime);
+        return $d->format('m/d/Y H:i');
+    }
+
+    private function formatNumber($value)
+    {
+        if ($value === '' || $value === null) return '';
+        $num = floatval($value);
+        return number_format($num, 2, '.', ',');
+    }
 }

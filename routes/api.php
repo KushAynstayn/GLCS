@@ -56,6 +56,18 @@ switch ($action) {
 
     /**
      * =========================
+     * GL EXCEL DOWNLOAD
+     * =========================
+     */
+    case 'gl-download':
+        {
+            require_once __DIR__ . '/../app/Controllers/ReportController.php';
+            (new ReportController())->downloadGLE();
+            break;
+        }
+
+    /**
+     * =========================
      * GL CODES
      * =========================
      */
