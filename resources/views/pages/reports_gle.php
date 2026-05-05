@@ -24,12 +24,26 @@
                 <span>Filter</span>
             </button>
 
-            <button class="px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-red-700 bg-red-50 border border-red-100 rounded-lg hover:bg-red-600 hover:text-white transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1 flex items-center gap-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                </svg>
-                <span>Download</span>
-            </button>
+            <!-- START: Modified Download Dropdown -->
+            <div class="relative inline-block text-left" id="downloadDropdownContainer">
+                <button onclick="toggleDownloadDropdown()" 
+                    class="px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-red-700 bg-red-50 border border-red-100 rounded-lg hover:bg-red-600 hover:text-white transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1 flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                    </svg>
+                    <span>Download</span>
+                </button>
+
+                <div id="downloadDropdownMenu" class="hidden absolute right-0 mt-2 w-32 origin-top-right bg-white border border-gray-100 rounded-lg shadow-xl z-50 overflow-hidden">
+                    <button onclick="downloadReport('excel')" class="w-full text-left px-4 py-2 text-xs font-bold uppercase text-gray-700 hover:bg-red-50 hover:text-[#a61e22] transition-colors flex items-center gap-2">
+                         <span class="w-2 h-2 bg-green-500 rounded-full"></span> Excel
+                    </button>
+                    <button onclick="downloadReport('pdf')" class="w-full text-left px-4 py-2 text-xs font-bold uppercase text-gray-700 hover:bg-red-50 hover:text-[#a61e22] transition-colors flex items-center gap-2 border-t border-gray-50">
+                        <span class="w-2 h-2 bg-red-500 rounded-full"></span> PDF
+                    </button>
+                </div>
+            </div>
+            <!-- END: Modified Download Dropdown -->
         </div>
     </div>
 
@@ -111,6 +125,36 @@
     let currentPage = 1;
     let totalPages = 1;
 
+    // NEW: Dropdown Toggle Function
+    function toggleDownloadDropdown() {
+        const menu = document.getElementById('downloadDropdownMenu');
+        menu.classList.toggle('hidden');
+    }
+
+    // UPDATED: Handle Download and connect to DownloadController.php
+    function downloadReport(type) {
+        // Convert the currentFilters object into a URL query string
+        const queryString = new URLSearchParams({
+            api: 'gl-download',
+            type: type,
+            source: 'report_extraction',
+            ...currentFilters
+        }).toString();
+
+        // Redirect to the download API endpoint
+        window.location.href = `index.php?${queryString}`;
+        
+        document.getElementById('downloadDropdownMenu').classList.add('hidden');
+    }
+
+    // NEW: Close dropdown when clicking outside
+    window.addEventListener('click', function(e) {
+        const container = document.getElementById('downloadDropdownContainer');
+        const menu = document.getElementById('downloadDropdownMenu');
+        if (menu && container && !container.contains(e.target)) {
+            menu.classList.add('hidden');
+        }
+    });
 
     function applyFilters() {
         currentPage = 1;
