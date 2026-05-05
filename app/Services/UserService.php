@@ -55,8 +55,8 @@ class UserService
             // =========================
             $stmt = $this->db->prepare("
                 INSERT INTO users 
-                (id_number, username, first_name, middle_name, last_name, role_id, password, department_id, status, created_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Active', NOW())
+                (id_number, username, first_name, middle_name, last_name, role_id, password, department_id, status, is_default_password, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Active', 1, NOW())
             ");
 
             $stmt->execute([
@@ -67,7 +67,8 @@ class UserService
                 $data['lastname'],
                 $data['role_id'],
                 $hashedPassword,
-                $deptId
+                $deptId,
+                1
             ]);
 
             $userId = $this->db->lastInsertId();
@@ -233,12 +234,41 @@ class UserService
         $password = password_hash('Mlinc12345!@', PASSWORD_BCRYPT);
 
         $stmt = $this->db->prepare("
-            UPDATE users SET password = ? WHERE id = ?
+            UPDATE users 
+            SET password = ?, is_default_password = 1 
+            WHERE id = ?
         ");
 
         $stmt->execute([$password, $userId]);
 
         return ['ok' => true];
+    }
+
+
+
+    public function changePassword($userId, $newPassword)
+    {
+        try {
+
+            $hashed = password_hash($newPassword, PASSWORD_BCRYPT);
+
+            $stmt = $this->db->prepare("
+                UPDATE users 
+                SET password = ?, is_default_password = 0 
+                WHERE id = ?
+            ");
+
+            $stmt->execute([$hashed, $userId]);
+
+            return ['ok' => true];
+
+        } catch (Exception $e) {
+
+            return [
+                'ok' => false,
+                'message' => $e->getMessage()
+            ];
+        }
     }
 
 }

@@ -1,8 +1,9 @@
 <?php
 
-require_once __DIR__ . '/../Models/User.php';
+require_once __DIR__ . '/../Core/Controller.php';
+require_once __DIR__ . '/../Services/AuthService.php';
 
-class AuthController {
+class AuthController extends Controller {
 
     public function login() {
 
@@ -12,50 +13,34 @@ class AuthController {
         $password = $_POST['password'] ?? '';
 
         if (!$username || !$password) {
-            echo json_encode([
+            return $this->json([
                 'ok' => false,
                 'message' => 'Username and password are required'
             ]);
-            return;
         }
 
-        $userModel = new User();
-        $user = $userModel->findByUsername($username);
+        $authService = new AuthService();
+        $result = $authService->attemptLogin($username, $password);
 
-        if (!$user) {
-            echo json_encode([
-                'ok' => false,
-                'message' => 'User not found'
-            ]);
-            return;
+        if (!$result['ok']) {
+            return $this->json($result);
         }
 
-        if (!password_verify($password, $user['password'])) {
-            echo json_encode([
-                'ok' => false,
-                'message' => 'Incorrect password'
-            ]);
-            return;
-        }
+        $user = $result['user'];
 
-        // ✅ FETCH ROLE NAME
-        $db = Database::getInstance()->getConnection();
-
-        $stmt = $db->prepare("SELECT name FROM roles WHERE id = ?");
-        $stmt->execute([$user['role_id']]);
-        $role = $stmt->fetch();
-
-        // ✅ CLEAN SESSION STRUCTURE
         $_SESSION['user'] = [
             'id' => $user['id'],
             'username' => $user['username'],
             'role_id' => $user['role_id'],
-            'role_name' => $role['name'] ?? 'User'
+            'role_name' => $result['role_name']
         ];
 
-        echo json_encode([
+        // 🔥 IMPORTANT FLAG
+        $_SESSION['force_password_change'] = $result['force_password_change'];
+
+        return $this->json([
             'ok' => true,
-            'message' => 'Login successful',
+            'force_password_change' => $result['force_password_change'],
             'redirect' => 'index.php?page=dashboard'
         ]);
     }

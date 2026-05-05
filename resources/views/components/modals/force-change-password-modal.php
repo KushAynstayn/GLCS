@@ -1,5 +1,5 @@
 <div id="changePasswordModal"
-     class="fixed inset-0 z-[9999] hidden items-center justify-center bg-black/50 backdrop-blur-sm opacity-0 transition-opacity duration-300">
+     class="fixed inset-0 z-[9999] hidden bg-black/50 backdrop-blur-sm flex items-center justify-center opacity-0 transition-opacity duration-300">
 
     <div id="modalContent"
          class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-8 transform scale-95 opacity-0 transition-all duration-300">
@@ -69,102 +69,160 @@
 
 
 <script>
-function showForcePasswordModal() {
-    const modal = document.getElementById('changePasswordModal');
-    const content = document.getElementById('modalContent');
 
-    modal.classList.remove('hidden');
+(function () {
 
-    setTimeout(() => {
-        modal.classList.remove('opacity-0');
-        content.classList.remove('opacity-0', 'scale-95');
-        content.classList.add('scale-100');
-    }, 10);
+    // =========================
+    // MODAL CONTROLS
+    // =========================
 
-    document.body.style.overflow = 'hidden'; // lock scroll
-}
+    window.showForcePasswordModal = function () {
+        const modal = document.getElementById('changePasswordModal');
+        const content = document.getElementById('modalContent');
 
-function togglePassword(id, el) {
-    const input = document.getElementById(id);
-    input.type = input.type === "password" ? "text" : "password";
-}
+        if (!modal || !content) return;
 
-/* VALIDATION */
-document.addEventListener("DOMContentLoaded", function () {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
 
-    const password = document.getElementById("newPassword");
-    const confirmPassword = document.getElementById("confirmPassword");
+        setTimeout(() => {
+            modal.classList.remove('opacity-0');
+            content.classList.remove('opacity-0', 'scale-95');
+            content.classList.add('scale-100');
+        }, 10);
 
-    const reqLength = document.getElementById("reqLength");
-    const reqUpper = document.getElementById("reqUpper");
-    const reqLower = document.getElementById("reqLower");
-    const reqNumber = document.getElementById("reqNumber");
-    const reqSpecial = document.getElementById("reqSpecial");
+        document.body.style.overflow = 'hidden';
+    };
 
-    const message = document.getElementById("passwordMatchMessage");
+    window.hideForcePasswordModal = function () {
+        const modal = document.getElementById('changePasswordModal');
+        const content = document.getElementById('modalContent');
 
-    function setRequirement(el, valid) {
-        el.classList.toggle("text-green-500", valid);
-        el.classList.toggle("text-red-500", !valid);
-    }
+        if (!modal || !content) return;
 
-    function validateStrength() {
-        const value = password.value;
+        modal.classList.add('opacity-0');
+        content.classList.add('scale-95');
 
-        const hasLength = value.length >= 8;
-        const hasUpper = /[A-Z]/.test(value);
-        const hasLower = /[a-z]/.test(value);
-        const hasNumber = /[0-9]/.test(value);
-        const hasSpecial = /[^A-Za-z0-9]/.test(value);
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }, 200);
 
-        setRequirement(reqLength, hasLength);
-        setRequirement(reqUpper, hasUpper);
-        setRequirement(reqLower, hasLower);
-        setRequirement(reqNumber, hasNumber);
-        setRequirement(reqSpecial, hasSpecial);
+        document.body.style.overflow = '';
+    };
 
-        return hasLength && hasUpper && hasLower && hasNumber && hasSpecial;
-    }
+    // =========================
+    // TOGGLE PASSWORD
+    // =========================
 
-    function checkMatch() {
-        if (!confirmPassword.value) {
-            message.textContent = "";
-            return false;
+    window.togglePassword = function (id) {
+        const input = document.getElementById(id);
+        if (!input) return;
+
+        input.type = input.type === "password" ? "text" : "password";
+    };
+
+    // =========================
+    // INIT AFTER DOM LOAD
+    // =========================
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const password = document.getElementById("newPassword");
+        const confirmPassword = document.getElementById("confirmPassword");
+
+        if (!password || !confirmPassword) return;
+
+        const reqLength = document.getElementById("reqLength");
+        const reqUpper = document.getElementById("reqUpper");
+        const reqLower = document.getElementById("reqLower");
+        const reqNumber = document.getElementById("reqNumber");
+        const reqSpecial = document.getElementById("reqSpecial");
+        const message = document.getElementById("passwordMatchMessage");
+
+        function setRequirement(el, valid) {
+            if (!el) return;
+            el.classList.toggle("text-green-500", valid);
+            el.classList.toggle("text-red-500", !valid);
         }
 
-        if (password.value === confirmPassword.value) {
-            message.textContent = "✔ Passwords match";
-            message.className = "text-green-500 text-xs mt-2";
-            return true;
-        } else {
-            message.textContent = "✖ Passwords do not match";
-            message.className = "text-red-500 text-xs mt-2";
-            return false;
-        }
-    }
+        function validateStrength() {
+            const v = password.value;
 
-    password.addEventListener("keyup", () => {
-        validateStrength();
-        checkMatch();
+            const okLength = v.length >= 8;
+            const okUpper = /[A-Z]/.test(v);
+            const okLower = /[a-z]/.test(v);
+            const okNumber = /[0-9]/.test(v);
+            const okSpecial = /[^A-Za-z0-9]/.test(v);
+
+            setRequirement(reqLength, okLength);
+            setRequirement(reqUpper, okUpper);
+            setRequirement(reqLower, okLower);
+            setRequirement(reqNumber, okNumber);
+            setRequirement(reqSpecial, okSpecial);
+
+            return okLength && okUpper && okLower && okNumber && okSpecial;
+        }
+
+        function checkMatch() {
+            if (!confirmPassword.value) {
+                message.textContent = "";
+                return false;
+            }
+
+            const ok = password.value === confirmPassword.value;
+
+            message.textContent = ok
+                ? "✔ Passwords match"
+                : "✖ Passwords do not match";
+
+            message.className = ok
+                ? "text-green-500 text-xs mt-2"
+                : "text-red-500 text-xs mt-2";
+
+            return ok;
+        }
+
+        password.addEventListener("input", function () {
+            validateStrength();
+            checkMatch();
+        });
+
+        confirmPassword.addEventListener("input", checkMatch);
+
+        // =========================
+        // SUBMIT
+        // =========================
+
+        document.getElementById("forcePasswordForm")?.addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            if (!validateStrength() || !checkMatch()) {
+                alert("Fix password requirements first.");
+                return;
+            }
+
+            document.getElementById("btnText").textContent = "Updating...";
+            document.getElementById("btnLoader").classList.remove("hidden");
+
+            fetch("index.php?api=change-password", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ password: password.value })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.ok) {
+                    window.location.href = "index.php?page=dashboard";
+                } else {
+                    alert(data.message || "Failed to update password");
+                }
+            });
+
+        });
+
     });
 
-    confirmPassword.addEventListener("keyup", checkMatch);
+})();
 
-    /* SUBMIT */
-    document.getElementById("forcePasswordForm").addEventListener("submit", function(e) {
-        e.preventDefault();
-
-        if (!validateStrength() || !checkMatch()) {
-            alert("Please fix password requirements.");
-            return;
-        }
-
-        // loading state
-        document.getElementById("btnText").textContent = "Updating...";
-        document.getElementById("btnLoader").classList.remove("hidden");
-
-        // 👉 NEXT STEP: AJAX HERE
-    });
-
-});
 </script>

@@ -73,7 +73,7 @@
                 
                 <div class="relative w-full">
                     <input type="password" id="password-input" name="password" placeholder="PASSWORD" class="w-full px-6 py-4 border border-white/50 bg-white/10 rounded-full text-white text-center placeholder:text-white/70 focus:outline-none focus:bg-white/20 transition-all" required>
-                    <button type="button" onclick="togglePassword()" class="absolute right-5 top-1/2 transform -translate-y-1/2 text-white/70 hover:text-white focus:outline-none">
+                    <button type="button" onclick="toggleLoginPassword()" class="absolute right-5 top-1/2 transform -translate-y-1/2 text-white/70 hover:text-white focus:outline-none">
                         <i id="eye-icon" class="fas fa-eye"></i>
                     </button>
                 </div>
@@ -160,20 +160,19 @@
         }, 50);
     }
 
-    function togglePassword() {
-        const passwordInput = document.getElementById('password-input');
-        const eyeIcon = document.getElementById('eye-icon');
-        
-        if (passwordInput.type === "password") {
-            passwordInput.type = "text";
-            eyeIcon.classList.remove('fa-eye');
-            eyeIcon.classList.add('fa-eye-slash');
-        } else {
-            passwordInput.type = "password";
-            eyeIcon.classList.remove('fa-eye-slash');
-            eyeIcon.classList.add('fa-eye');
-        }
-    }
+    window.toggleLoginPassword = function () {
+        const input = document.getElementById('password-input');
+        const icon = document.getElementById('eye-icon');
+
+        if (!input || !icon) return;
+
+        const isHidden = input.type === "password";
+
+        input.type = isHidden ? "text" : "password";
+
+        icon.classList.toggle('fa-eye', !isHidden);
+        icon.classList.toggle('fa-eye-slash', isHidden);
+    };
 
 
     document.getElementById("loginForm").addEventListener("submit", async function(e) {
@@ -191,7 +190,17 @@
         console.log(data);
 
         if (data.ok) {
-            window.location.href = data.redirect;
+
+            if (data.force_password_change) {
+                if (typeof showForcePasswordModal === "function") {
+                    showForcePasswordModal();
+                } else {
+                    console.error("Modal not loaded yet");
+                }
+            } else {
+                window.location.href = data.redirect;
+            }
+
         } else {
             alert(data.message);
         }
