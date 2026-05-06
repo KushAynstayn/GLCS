@@ -89,14 +89,13 @@
                 </div>
             </div>
             
-            <div class="flex gap-2 mb-2">
-                <button type="button" onclick="showCategoryMode()"
-                    class="px-3 py-1 text-xs font-bold bg-gray-200 rounded">
+            <div class="flex bg-gray-100 border border-gray-200 rounded-lg p-0.5 mb-2 w-fit shadow-sm">
+                <button type="button" onclick="showCategoryMode()" id="categoryBtn"
+                    class="flex-1 px-2 py-0.5 text-xs font-bold rounded-md transition-all bg-white text-gray-700 shadow-sm">
                     CATEGORY
                 </button>
-
-                <button type="button" onclick="showGlobalGLMode()"
-                    class="px-3 py-1 text-xs font-bold bg-gray-200 rounded">
+                <button type="button" onclick="showGlobalGLMode()" id="glBtn"
+                    class="flex-1 px-2 py-0.5 text-xs font-bold rounded-md transition-all text-gray-500 hover:bg-gray-50 hover:text-gray-700">
                     GL CODE
                 </button>
             </div>
@@ -520,6 +519,10 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         loadLevel4();
+        
+        // Set initial switch state
+        document.getElementById('categoryBtn').classList.add('bg-white', 'text-gray-700', 'shadow-sm');
+        document.getElementById('glBtn').classList.add('text-gray-500');
     });
 
 
@@ -733,6 +736,12 @@
     function showCategoryMode() {
     document.getElementById('category_mode_section').classList.remove('hidden');
     document.getElementById('global_gl_section').classList.add('hidden');
+    
+    // Update button styles
+    document.getElementById('categoryBtn').classList.add('bg-white', 'text-gray-700', 'shadow-sm');
+    document.getElementById('categoryBtn').classList.remove('text-gray-500');
+    document.getElementById('glBtn').classList.remove('bg-white', 'text-gray-700', 'shadow-sm');
+    document.getElementById('glBtn').classList.add('text-gray-500');
     }
 
     function showGlobalGLMode() {
@@ -740,6 +749,12 @@
         document.getElementById('global_gl_section').classList.remove('hidden');
 
         loadAllGLCodes(); // 🔥 important
+        
+        // Update button styles
+        document.getElementById('glBtn').classList.add('bg-white', 'text-gray-700', 'shadow-sm');
+        document.getElementById('glBtn').classList.remove('text-gray-500');
+        document.getElementById('categoryBtn').classList.remove('bg-white', 'text-gray-700', 'shadow-sm');
+        document.getElementById('categoryBtn').classList.add('text-gray-500');
     }
 
 
