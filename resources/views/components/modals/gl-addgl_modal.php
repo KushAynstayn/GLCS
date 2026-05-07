@@ -15,88 +15,60 @@
         </div>
 
         <!-- Form: Reduced padding and vertical spacing -->
-        <form id="addGlForm" action="process_gl.php" method="POST" class="p-4 space-y-2">
+        <form id="addGlForm" class="p-4 space-y-2">
             
             <div class="grid grid-cols-2 gap-x-4 gap-y-2">
                 <div>
                     <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">GL Account</label>
-                    <input type="text" name="gl_account" required
+                    <input type="text" name="gl_account" required placeholder="Input GL Code"
                         class="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all">
                 </div>
 
                 <div>
                     <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Account Title</label>
-                    <select name="account_title" required class="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all cursor-pointer">
-                        <option value="">Select Title</option>
-                        <option value="teller_cash_peso">Teller Cash Peso</option>
-                        <option value="vault_cash_kwon">Vault Cash Korean Won</option>
-                        <option value="cib_bpi">Cash in Bank - BPI</option>
-                        <option value="df_vpo">Disbursing Fund - VPO VisMin</option>
-                        <option value="rf_all">Revolving Fund - Amparito Llamas Lhuillier Division</option>
-                    </select>
+                    <input type="text" name="account_title" placeholder="Input Account Title"
+                    class="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none">
                 </div>
 
                 <div>
                     <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Level 4</label>
-                    <select name="level_4" class="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all cursor-pointer">
+                    <select name="level_4" id="level_4" class="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all cursor-pointer">
                         <option value="">Select Level 4</option>
-                        <option value="cash_hand">Cash on Hand</option>
-                        <option value="cash_bank">Cash in Bank</option>
-                        <option value="revolving">Revolving Fund Support</option>
-                        <option value="quick_loan">Quick Cash Loan</option>
-                        <option value="ml_loans">ML Loans</option>
                     </select>
                 </div>
 
                 <div>
                     <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Level 3</label>
-                    <select name="level_3" class="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all cursor-pointer">
+                    <select name="level_3" id="level_3" class="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all cursor-pointer">
                         <option value="">Select Level 3</option>
-                        <option value="cash_equiv">Cash and Cash Equivalent</option>
-                        <option value="trade_receiv">Trade Accounts Receivable</option>
-                        <option value="gold_inv">Gold Inventory</option>
-                        <option value="merch_inv">Merchandise Inventory</option>
-                        <option value="supplies_inv">Supplies Inventory</option>
                     </select>
                 </div>
 
                 <div>
                     <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Level 2</label>
-                    <select name="level_2" class="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all cursor-pointer">
+                    <select name="level_2" id="level_2" class="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all cursor-pointer">
                         <option value="">Select Level 2</option>
-                        <option value="curr_asset">Current Asset</option>
-                        <option value="non_curr_asset">Non Current Asset</option>
-                        <option value="other_non_curr">Other Non Current Asset</option>
-                        <option value="curr_liab">Current Liabilities</option>
-                        <option value="non_curr_liab">Non Current Liabilities</option>
                     </select>
                 </div>
 
                 <div>
                     <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Level 1</label>
-                    <select name="level_1" class="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all cursor-pointer">
+                    <select name="level_1" id="level_1" class="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all cursor-pointer">
                         <option value="">Select Level 1</option>
-                        <option value="asset">Asset</option>
-                        <option value="liab">Liabilities</option>
-                        <option value="capital">Capital</option>
-                        <option value="rev">Revenues</option>
-                        <option value="exp">Expenses</option>
                     </select>
                 </div>
 
                 <div>
                     <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">FS Account Type</label>
-                    <select name="fs_account_type" class="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all cursor-pointer">
-                        <option value="bs">Balance Sheet</option>
-                        <option value="is">Income Statement</option>
+                    <select name="fs_account_type" id="fs_account_type" class="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all cursor-pointer">
+                        <option value="">Select FS Account Type</option>
                     </select>
                 </div>
 
                 <div>
                     <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Normal Balance</label>
-                    <select name="normal_balance" class="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all cursor-pointer">
-                        <option value="DR">Debit (DR)</option>
-                        <option value="CR">Credit (CR)</option>
+                    <select name="normal_balance" id="normal_balance" class="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all cursor-pointer">
+                        <option value="">Select Normal Balance</option>
                     </select>
                 </div>
             </div>

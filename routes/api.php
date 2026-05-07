@@ -164,6 +164,14 @@ switch ($action) {
         (new ReportController())->getTransactionTypes();
         break;
 
+    case 'gl-store':
+        (new GLCodeController())->store();
+        break;
+
+    case 'gl-dropdowns':
+        (new GLCodeController())->dropdowns();
+        break;
+
     default:
         echo json_encode([
             'ok' => false,

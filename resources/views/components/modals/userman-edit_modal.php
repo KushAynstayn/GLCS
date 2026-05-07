@@ -1,7 +1,8 @@
 <div id="modal-userman" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden transform transition-all">
+    <!-- Increased width to max-w-4xl for the 2-column layout -->
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl overflow-hidden transform transition-all flex flex-col max-h-[95vh]">
         
-        <!-- Header: Reduced padding and gap -->
+        <!-- Header -->
         <div class="p-4 pb-0 flex items-start gap-3">
             <div class="p-2 bg-red-50 rounded-full">
                 <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -14,83 +15,93 @@
             </div>
         </div>
 
-        <!-- Body: Reduced padding and internal spacing -->
-        <div class="p-4 space-y-3">
-            <div class="space-y-2">
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">ID Number</label>
-                        <input id="edit_id_number" type="text" class="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all">
+        <!-- Body: 2-Column Grid Layout -->
+        <div class="p-4 flex-1 overflow-y-auto">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- ================= LEFT COLUMN ================= -->
+                <div class="space-y-4">
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">ID Number</label>
+                            <input id="edit_id_number" type="text" class="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Username</label>
+                            <input id="edit_username" type="text" class="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all">
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Username</label>
-                        <input id="edit_username" type="text" class="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all">
+
+                    <div class="grid grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">First Name</label>
+                            <input id="edit_firstname" type="text" class="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Middle Name</label>
+                            <input id="edit_middlename" type="text" class="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Last Name</label>
+                            <input id="edit_lastname" type="text" class="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all">
+                        </div>
+                    </div>
+
+                    <div class="space-y-1">
+                        <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Role</h3>
+                        <select id="edit_role" class="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none cursor-pointer">
+                            <?php if (!empty($roles)): ?>
+                                <?php foreach ($roles as $role): ?>
+                                    <option value="<?= $role['id'] ?>">
+                                        <?= htmlspecialchars($role['name']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </select>
+                    </div>
+
+                    <div class="space-y-1">
+                        <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Change Status</h3>
+                        <div>
+                            <select id="edit_status" class="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all cursor-pointer">
+                                <option>Active</option>
+                                <option>Disabled</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-3 gap-3">
-                    <div>
-                        <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">First Name</label>
-                        <input id="edit_firstname" type="text" class="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all">
+                <!-- ================= RIGHT COLUMN ================= -->
+                <div class="flex flex-col h-full space-y-3">
+                    
+                    <div class="space-y-1">
+                        <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Assign GL Codes</h3>
+                        <input id="edit_gl_search"
+                            type="text"
+                            placeholder="Search GL Code..."
+                            class="w-full px-3 py-1.5 text-xs border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none">
+
+                        <div id="edit_gl_results"
+                            class="border mt-1 rounded max-h-24 overflow-y-auto text-xs empty:hidden"></div>
                     </div>
-                    <div>
-                        <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Middle Name</label>
-                        <input id="edit_middlename" type="text" class="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all">
+
+                    <div class="space-y-1 flex flex-col flex-1">
+                        <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                            Assigned GL Codes
+                        </h3>
+                        <!-- Increased height and added flex-grow -->
+                        <div id="edit_gl_tags_container" style="scrollbar-width: thin;"
+                            class="flex flex-wrap content-start gap-2 p-3 bg-gray-50 border border-gray-200 rounded-lg h-[380px] overflow-y-auto">
+                            <!-- GL tags will appear here -->
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Last Name</label>
-                        <input id="edit_lastname"type="text" class="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all">
-                    </div>
-                </div>
-            </div>
 
-            <div class="space-y-1">
-                <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Role</h3>
-                <select id="edit_role"
-                    class="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none cursor-pointer">
-
-                    <?php if (!empty($roles)): ?>
-                        <?php foreach ($roles as $role): ?>
-                            <option value="<?= $role['id'] ?>">
-                                <?= htmlspecialchars($role['name']) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </select>
-            </div>
-
-            <div class="space-y-1">
-                <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                    Assigned GL Codes
-                </h3>
-
-                <div id="edit_gl_tags_container"
-                    class="flex flex-wrap gap-2 p-2 border border-gray-200 rounded-lg max-h-[120px] overflow-y-auto">
-                    <!-- GL tags will appear here -->
-                </div>
-            </div>
-
-            <input id="edit_gl_search"
-                type="text"
-                placeholder="Search GL Code..."
-                class="w-full mt-2 px-3 py-1.5 text-xs border border-gray-200 rounded-lg">
-
-            <div id="edit_gl_results"
-                class="border mt-1 rounded max-h-24 overflow-y-auto text-xs"></div>
-
-            <div class="space-y-1">
-                <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Change Status</h3>
-                <div>
-                    <select  id="edit_status" class="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all cursor-pointer">
-                        <option>Active</option>
-                        <option>Disabled</option>
-                    </select>
                 </div>
             </div>
         </div>
 
-        <!-- Footer: Reduced padding and tightened vertical margins -->
-        <div class="flex justify-end gap-2 p-4 pt-3 border-t border-gray-100">
+        <!-- Footer -->
+        <div class="flex justify-end gap-2 p-4 pt-3 border-t border-gray-100 shrink-0">
             <button type="button" onclick="resetEditModal(); closeModal('userman')" 
                 class="px-4 py-1.5 text-[11px] font-bold uppercase tracking-wider text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all">
                 Cancel

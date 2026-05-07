@@ -175,6 +175,7 @@ abstract class BaseImportService
                     $clean = $this->cleanRow($row);
                     $clean['import_id'] = $importId; // 🔥 attach batch
                     $batch[] = $clean;
+                    $count++;
 
                     if ($count === 200) {
                         $inserted += $this->bulkInsert($batch);
@@ -311,26 +312,29 @@ abstract class BaseImportService
 
     private function deleteByFileHash($fileHash)
     {
-        // get import record
+        // get import IDs
         $stmt = $this->db->prepare("
             SELECT id FROM imports WHERE file_hash = ?
         ");
         $stmt->execute([$fileHash]);
-        $import = $stmt->fetch();
 
-        if (!$import) return;
+        $imports = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
-        // ⚠️ OPTION 1: if you don't have batch_id in gle
-        // fallback delete using matching data (not ideal)
+        if (empty($imports)) return;
 
-        // 🔥 BEST: if you later add batch_id, use that instead
+        // delete from gle first
+        $in = implode(',', array_fill(0, count($imports), '?'));
 
-        // for now just delete import record
-        $stmt = $this->db->prepare("DELETE FROM imports WHERE file_hash = ?");
+        $stmt = $this->db->prepare("
+            DELETE FROM gle WHERE import_id IN ($in)
+        ");
+        $stmt->execute($imports);
+
+        // delete import records
+        $stmt = $this->db->prepare("
+            DELETE FROM imports WHERE file_hash = ?
+        ");
         $stmt->execute([$fileHash]);
-
-        // ⚠️ NOTE:
-        // Without batch_id in gle, you CANNOT safely delete old rows
     }
 
 }
