@@ -60,15 +60,14 @@ class UserService
             ");
 
             $stmt->execute([
-                $data['id_number'],
-                $data['username'],
-                $data['firstname'],
-                $data['middlename'] ?? null,
-                $data['lastname'],
+                strtoupper($data['id_number']),
+                strtoupper($data['username']),
+                strtoupper($data['firstname']),
+                isset($data['middlename']) ? strtoupper($data['middlename']) : null,
+                strtoupper($data['lastname']),
                 $data['role_id'],
                 $hashedPassword,
                 $deptId,
-                1
             ]);
 
             $userId = $this->db->lastInsertId();
@@ -187,11 +186,11 @@ class UserService
             ");
 
             $stmt->execute([
-                $data['id_number'],
-                $username,
-                $data['firstname'],
-                $data['middlename'] ?? null,
-                $data['lastname'],
+                strtoupper($data['id_number']),
+                strtoupper($data['username']),
+                strtoupper($data['firstname']),
+                isset($data['middlename']) ? strtoupper($data['middlename']) : null,
+                strtoupper($data['lastname']),
                 $data['role_id'],
                 $data['status'],
                 $userId

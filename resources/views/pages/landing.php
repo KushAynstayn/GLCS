@@ -198,11 +198,26 @@
                     console.error("Modal not loaded yet");
                 }
             } else {
-                window.location.href = data.redirect;
+                // ✅ Optional: show success before redirect (better UX)
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Login Successful',
+                    text: 'Redirecting...',
+                    timer: 1200,
+                    showConfirmButton: false
+                }).then(() => {
+                    window.location.href = data.redirect;
+                });
+
             }
 
         } else {
-            alert(data.message);
+            Swal.fire({
+                icon: 'error',
+                title: 'Login Failed',
+                text: data.message || 'Invalid credentials',
+                confirmButtonColor: '#D50000'
+            });
         }
     });
 

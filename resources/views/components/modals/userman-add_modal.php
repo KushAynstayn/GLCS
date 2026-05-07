@@ -1,7 +1,8 @@
 <div id="modal-add-user" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg transform transition-all">
+    <!-- Increased width to max-w-4xl for the 2-column layout -->
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl transform transition-all flex flex-col max-h-[95vh]">
         
-        <!-- Header: Reduced padding -->
+        <!-- Header -->
         <div class="p-4 pb-0 flex items-start gap-4">
             <div class="p-2 bg-red-50 rounded-full">
                 <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -14,156 +15,168 @@
             </div>
         </div>
 
-        <!-- Form: Tightened space-y and padding -->
-        <form id="createUserForm" class="p-4 space-y-2">
-            <div>
-                <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">ID Number</label>
-                <input type="text" name="id_number" id="input_id_number" required
-                    class="w-full px-4 py-2 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all">
-            </div>
-
-            <div>
-                <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Username</label>
-                <input type="text" name="username" id="display_username" readonly
-                    placeholder="will be generated"
-                    class="w-full px-4 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg text-gray-500 italic outline-none">
-            </div>
-
-            <div class="grid grid-cols-3 gap-3">
-                <div>
-                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Firstname</label>
-                    <input type="text" name="firstname" required
-                        class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Middlename</label>
-                    <input type="text" name="middlename"
-                        class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Lastname</label>
-                    <input type="text" name="lastname" id="input_lastname" required
-                        class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all">
-                </div>
-            </div>
-
-            <!-- Report Filter Labels Added Here -->
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Role</label>
-                    <select name="role_id" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all cursor-pointer">
-                        <?php if (!empty($roles)): ?>
-                            <?php foreach ($roles as $role): ?>
-                                <option value="<?= $role['id'] ?>"><?= htmlspecialchars($role['name']) ?></option>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
-                    </select>
-                </div>
+        <!-- Form -->
+        <form id="createUserForm" class="p-4 flex flex-col flex-1 overflow-hidden">
+            
+            <!-- 2-Column Grid Layout -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 overflow-y-auto pr-2 pb-2">
                 
-                <div class="relative" id="dept-dropdown-wrapper">
-                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Department</label>
-                    <input type="hidden" id="selected_dept_id" name="department_id">
-                    <input type="hidden" id="department_name" name="department_name">    
-                    <input type="text" id="dept_search" placeholder="Select or Add..." 
-                        class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all cursor-pointer"
-                        onclick="toggleDeptDropdown(true)">
+                <!-- ================= LEFT COLUMN ================= -->
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">ID Number</label>
+                        <input type="text" name="id_number" id="input_id_number" required
+                            class="w-full px-4 py-2 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all">
+                    </div>
 
-                    <div id="dept_dropdown" class="absolute z-[100] w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-xl hidden max-h-64 overflow-y-auto">
-                        <div id="add_dept_trigger" onclick="enableAddDeptMode()" class="px-3 py-2 hover:bg-gray-50 cursor-pointer border-b border-gray-100 text-red-600 font-bold flex items-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path d="M12 8v8m-4-4h8" stroke-width="2" stroke-linecap="round"/></svg>
-                            Add Department
+                    <div>
+                        <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Username</label>
+                        <input type="text" name="username" id="display_username" readonly
+                            placeholder="will be generated"
+                            class="w-full px-4 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg text-gray-500 italic outline-none">
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Firstname</label>
+                            <input type="text" name="firstname" required
+                                class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all">
                         </div>
-                        <div id="add_dept_input_container" class="hidden px-2 py-2">
-                            <input type="text" id="new_dept_input" placeholder="Type name & enter..." class="w-full px-2 py-1 text-sm border border-red-300 rounded focus:outline-none" onkeydown="handleDeptEnter(event)">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Middlename</label>
+                            <input type="text" name="middlename"
+                                class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all">
                         </div>
-                        <div id="dept_options">
-                            <?php if (!empty($departments)): ?>
-                                <?php foreach ($departments as $dept): ?>
-                                    <div class="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm" onclick="selectDept('<?= $dept['id'] ?>', '<?= htmlspecialchars($dept['name']) ?>')">
-                                        <?= htmlspecialchars($dept['name']) ?>
-                                    </div>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Lastname</label>
+                            <input type="text" name="lastname" id="input_lastname" required
+                                class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all">
                         </div>
                     </div>
-                </div>
-            </div>
-            
-            <div class="flex bg-gray-100 border border-gray-200 rounded-lg p-0.5 mb-2 w-fit shadow-sm">
-                <button type="button" onclick="showCategoryMode()" id="categoryBtn"
-                    class="flex-1 px-2 py-0.5 text-xs font-bold rounded-md transition-all bg-white text-gray-700 shadow-sm">
-                    CATEGORY
-                </button>
-                <button type="button" onclick="showGlobalGLMode()" id="glBtn"
-                    class="flex-1 px-2 py-0.5 text-xs font-bold rounded-md transition-all text-gray-500 hover:bg-gray-50 hover:text-gray-700">
-                    GL CODE
-                </button>
-            </div>
 
-            <!-- More Report Filter Labels Added Here -->
-            <div id="category_mode_section" class="grid grid-cols-2 gap-3">
-                <div class="relative" id="lvl4-wrapper">
-                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1"> Level 4 Category</label>
-                    <input type="text" id="lvl4_input"
-                        placeholder="Search Category..."
-                        onclick="toggleLvl4Dropdown(true)"
-                        class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg">
-
-                    <div id="lvl4_dropdown" onclick="event.stopPropagation()" class="hidden absolute z-[100] w-full mt-1 bg-white border rounded-lg shadow max-h-64 overflow-y-auto">
-                        <div class="px-3 py-2 border-b">
-                            <label class="flex items-center gap-2 font-bold">
-                                <input type="checkbox" onchange="toggleAllLvl4(this)"> Select All
-                            </label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Role</label>
+                            <select name="role_id" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all cursor-pointer">
+                                <?php if (!empty($roles)): ?>
+                                    <?php foreach ($roles as $role): ?>
+                                        <option value="<?= $role['id'] ?>"><?= htmlspecialchars($role['name']) ?></option>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </select>
                         </div>
-                        <div id="lvl4_options"></div>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Assign GL Codes</label>
-                    <div class="relative" id="gl-dropdown-wrapper">
-                        <input type="text" id="gl_global_search"
-                            onclick="handleGlClick()"
-                            autocomplete="off"        
-                            placeholder="Search any GL code..."
-                            class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none"
-                            onclick="toggleGlDropdown(true)">
                         
-                        <div id="gl_dropdown" onclick="event.stopPropagation()" class="absolute z-[100] w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-xl hidden max-h-48 overflow-y-auto">
-                            <div class="px-3 py-2 border-b border-gray-100 bg-gray-50">
-                                <label class="flex items-center gap-2 cursor-pointer font-bold text-sm text-gray-700">
-                                    <input type="checkbox" id="gl_select_all" onchange="toggleSelectAll()"> Select All
-                                </label>
+                        <div class="relative" id="dept-dropdown-wrapper">
+                            <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Department</label>
+                            <input type="hidden" id="selected_dept_id" name="department_id">
+                            <input type="hidden" id="department_name" name="department_name">    
+                            <input type="text" id="dept_search" placeholder="Select or Add..." 
+                                class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none transition-all cursor-pointer"
+                                onclick="toggleDeptDropdown(true)">
+
+                            <div id="dept_dropdown" class="absolute z-[100] w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-xl hidden max-h-64 overflow-y-auto">
+                                <div id="add_dept_trigger" onclick="enableAddDeptMode()" class="px-3 py-2 hover:bg-gray-50 cursor-pointer border-b border-gray-100 text-red-600 font-bold flex items-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path d="M12 8v8m-4-4h8" stroke-width="2" stroke-linecap="round"/></svg>
+                                    Add Department
+                                </div>
+                                <div id="add_dept_input_container" class="hidden px-2 py-2">
+                                    <input type="text" id="new_dept_input" placeholder="Type name & enter..." class="w-full px-2 py-1 text-sm border border-red-300 rounded focus:outline-none" onkeydown="handleDeptEnter(event)">
+                                </div>
+                                <div id="dept_options">
+                                    <?php if (!empty($departments)): ?>
+                                        <?php foreach ($departments as $dept): ?>
+                                            <div class="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm" onclick="selectDept('<?= $dept['id'] ?>', '<?= htmlspecialchars($dept['name']) ?>')">
+                                                <?= htmlspecialchars($dept['name']) ?>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
+                                </div>
                             </div>
-                            <div id="gl_options_list"></div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div id="global_gl_section" class="hidden">
-                <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">
-                    Assign GL Codes
-                </label>
-
-                <div class="relative">
-                    <input type="text" id="gl_global_only_search"
-                        onclick="handleGlobalGlClick()"
-                        placeholder="Search all GL codes..."
-                        class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg">
-
-                    <div id="gl_global_only_dropdown"
-                        class="absolute z-[100] w-full mt-1 bg-white border rounded-lg shadow max-h-48 overflow-y-auto hidden">
+                <!-- ================= RIGHT COLUMN ================= -->
+                <div class="flex flex-col space-y-4">
+                    
+                    <div class="flex bg-gray-100 border border-gray-200 rounded-lg p-0.5 w-full shadow-sm">
+                        <button type="button" onclick="showCategoryMode()" id="categoryBtn"
+                            class="flex-1 px-2 py-1.5 text-xs font-bold rounded-md transition-all bg-white text-gray-700 shadow-sm">
+                            CATEGORY
+                        </button>
+                        <button type="button" onclick="showGlobalGLMode()" id="glBtn"
+                            class="flex-1 px-2 py-1.5 text-xs font-bold rounded-md transition-all text-gray-500 hover:bg-gray-50 hover:text-gray-700">
+                            GL CODE
+                        </button>
                     </div>
+
+                    <!-- Category Mode Section (Stacked for better fit in column) -->
+                    <div id="category_mode_section" class="flex flex-col gap-4">
+                        <div class="relative" id="lvl4-wrapper">
+                            <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1"> Level 4 Category</label>
+                            <input type="text" id="lvl4_input"
+                                placeholder="Search Category..."
+                                onclick="toggleLvl4Dropdown(true)"
+                                class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg">
+
+                            <div id="lvl4_dropdown" onclick="event.stopPropagation()" class="hidden absolute z-[100] w-full mt-1 bg-white border rounded-lg shadow max-h-64 overflow-y-auto">
+                                <div class="px-3 py-2 border-b">
+                                    <label class="flex items-center gap-2 font-bold">
+                                        <input type="checkbox" onchange="toggleAllLvl4(this)"> Select All
+                                    </label>
+                                </div>
+                                <div id="lvl4_options"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Assign GL Codes</label>
+                            <div class="relative" id="gl-dropdown-wrapper">
+                                <input type="text" id="gl_global_search"
+                                    onclick="handleGlClick()"
+                                    autocomplete="off"        
+                                    placeholder="Search any GL code..."
+                                    class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-red-500 outline-none"
+                                    onclick="toggleGlDropdown(true)">
+                                
+                                <div id="gl_dropdown" onclick="event.stopPropagation()" class="absolute z-[100] w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-xl hidden max-h-48 overflow-y-auto">
+                                    <div class="px-3 py-2 border-b border-gray-100 bg-gray-50">
+                                        <label class="flex items-center gap-2 cursor-pointer font-bold text-sm text-gray-700">
+                                            <input type="checkbox" id="gl_select_all" onchange="toggleSelectAll()"> Select All
+                                        </label>
+                                    </div>
+                                    <div id="gl_options_list"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="global_gl_section" class="hidden flex flex-col gap-4">
+                        <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">
+                            Assign GL Codes
+                        </label>
+                        <div class="relative">
+                            <input type="text" id="gl_global_only_search"
+                                onclick="handleGlobalGlClick()"
+                                placeholder="Search all GL codes..."
+                                class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg">
+
+                            <div id="gl_global_only_dropdown"
+                                class="absolute z-[100] w-full mt-1 bg-white border rounded-lg shadow max-h-48 overflow-y-auto hidden">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Increased Height Container -->
+                    <div id="gl_tags_container" style="scrollbar-width: thin;"
+                        class="flex flex-wrap content-start gap-2 h-48 min-h-[12rem] flex-grow overflow-y-auto border border-gray-200 bg-gray-50 rounded-lg p-3">
+                    </div>
+                    <div id="hidden_gl_inputs"></div>
                 </div>
             </div>
-            
-            <div id="gl_tags_container" style="scrollbar-width: thin;"
-                class="flex flex-wrap gap-2 mt-1 max-h-20 overflow-y-auto border border-gray-200 rounded-lg p-2">
-            </div>
-            <div id="hidden_gl_inputs"></div>
 
-            <div class="flex justify-end gap-3 mt-4 pt-3 border-t border-gray-100">
+            <!-- Footer (Stays at the bottom) -->
+            <div class="flex justify-end gap-3 mt-4 pt-4 border-t border-gray-100 shrink-0">
                 <button type="button" onclick="closeAddUserModal()"
                     class="px-6 py-2 text-xs font-bold uppercase tracking-wider text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all">
                     Cancel
@@ -534,24 +547,60 @@
 
         const formData = new FormData(this);
         const data = Object.fromEntries(formData.entries());
-
         data.gl_codes = formData.getAll('gl_codes[]');
 
-        const res = await fetch('index.php?api=create-user', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
+        // 🔥 SHOW LOADING HERE (BEFORE FETCH)
+        Swal.fire({
+            title: 'Creating user...',
+            text: 'Please wait while we process the account',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
         });
 
-        const result = await res.json();
+        try {
+            const res = await fetch('index.php?api=create-user', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
 
-        if (!result.ok) {
-            alert(result.message);
-            return;
+            const result = await res.json();
+
+            Swal.close(); // 🔥 CLOSE LOADING IMMEDIATELY AFTER RESPONSE
+
+            if (!result.ok) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Failed',
+                    text: result.message || 'Unable to create user',
+                    confirmButtonColor: '#D50000'
+                });
+                return;
+            }
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: 'User created successfully',
+                timer: 1500,
+                showConfirmButton: false
+            }).then(() => {
+                location.reload();
+            });
+
+        } catch (err) {
+
+            Swal.close();
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Server Error',
+                text: 'Something went wrong while creating the user',
+                confirmButtonColor: '#D50000'
+            });
         }
-
-        alert('User created successfully');
-        location.reload();
     });
 
 

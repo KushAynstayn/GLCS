@@ -155,4 +155,68 @@ class GLCodeService extends BaseImportService
     }
 
 
+
+    public function createGLCode($data)
+    {
+        $stmt = $this->db->prepare("
+            INSERT INTO gl_codes (
+                gl_account,
+                account_title,
+                level_4,
+                level_3,
+                level_2,
+                level_1,
+                fs_account_type,
+                normal_balance,
+                status,
+                created_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, NOW())
+        ");
+
+        $stmt->execute([
+            $data['gl_account'],
+            $data['account_title'],
+            $data['level_4'],
+            $data['level_3'],
+            $data['level_2'],
+            $data['level_1'],
+            $data['fs_account_type'],
+            $data['normal_balance']
+        ]);
+
+        return ['ok' => true];
+    }
+
+
+    public function getDropdownData()
+    {
+        $fields = [
+            'level_4',
+            'level_3',
+            'level_2',
+            'level_1',
+            'fs_account_type',
+            'normal_balance'
+        ];
+
+        $result = [];
+
+        foreach ($fields as $field) {
+            $stmt = $this->db->query("
+                SELECT DISTINCT $field 
+                FROM gl_codes
+                WHERE $field IS NOT NULL AND $field != ''
+                ORDER BY $field ASC
+            ");
+
+            $result[$field] = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        }
+
+        return [
+            'ok' => true,
+            'data' => $result
+        ];
+    }
+
+
 }

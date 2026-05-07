@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../resources/assets/css/app.css">
     <link rel="stylesheet" href="../resources/assets/css/sidebar.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         body { font-family: 'League Spartan', sans-serif; }
         .font-poppins { font-family: 'Poppins', sans-serif; }

@@ -106,4 +106,31 @@ class GLCodeController extends Controller
         );
     }
 
+
+
+    public function store()
+    {
+        $input = json_decode(file_get_contents("php://input"), true);
+
+        if (!$input) {
+            return $this->json([
+                'ok' => false,
+                'message' => 'Invalid input'
+            ]);
+        }
+
+        return $this->json(
+            $this->service->createGLCode($input)
+        );
+    }
+
+
+
+    public function dropdowns()
+    {
+        return $this->json(
+            $this->service->getDropdownData()
+        );
+    }
+
 }
