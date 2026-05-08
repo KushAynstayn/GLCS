@@ -262,8 +262,8 @@ async function startInsert(override = false) {
             closeInsertModal();
 
             Swal.fire({
-                title: 'Duplicate File Detected',
-                text: 'This file was already imported. Do you want to override existing data?',
+                title: 'Duplicate Records Detected',
+                text: 'Some records already existed. Do you want to override existing data?',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Yes, Override',

@@ -249,21 +249,41 @@ class ReportService
     // =========================
     public function getZones($mainZone)
     {
+        $excludedZones = [
+            'LNCR-MANCOMM',
+            'LNCR-SUPPORT',
+            'VISMIN-MANCOMM',
+            'VISMIN-SUPPORT'
+        ];
+
+        $placeholders = implode(',', array_fill(0, count($excludedZones), '?'));
+
         if (empty($mainZone)) {
-            // 🔥 ALL → return ALL zones
-            $stmt = $this->master->query("
+
+            $sql = "
                 SELECT zone_code, zone_description
                 FROM zone_masterfile
+                WHERE zone_code NOT IN ($placeholders)
                 ORDER BY zone_code
-            ");
+            ";
+
+            $stmt = $this->master->prepare($sql);
+            $stmt->execute($excludedZones);
+
         } else {
-            $stmt = $this->master->prepare("
+
+            $sql = "
                 SELECT zone_code, zone_description
                 FROM zone_masterfile
                 WHERE main_zone_code = ?
+                AND zone_code NOT IN ($placeholders)
                 ORDER BY zone_code
-            ");
-            $stmt->execute([$mainZone]);
+            ";
+
+            $params = array_merge([$mainZone], $excludedZones);
+
+            $stmt = $this->master->prepare($sql);
+            $stmt->execute($params);
         }
 
         return ['ok' => true, 'data' => $stmt->fetchAll()];
@@ -274,21 +294,39 @@ class ReportService
     // =========================
     public function getRegions($zone)
     {
+        $excludedRegions = [
+            'HO LNCR SUPPORT',
+            'HO VISMIN SUPPORT'
+        ];
+
+        $placeholders = implode(',', array_fill(0, count($excludedRegions), '?'));
+
         if (empty($zone)) {
-            // 🔥 ALL → return ALL regions
-            $stmt = $this->master->query("
+
+            $sql = "
                 SELECT region_code, region_description
                 FROM region_masterfile
+                WHERE region_description NOT IN ($placeholders)
                 ORDER BY region_description
-            ");
+            ";
+
+            $stmt = $this->master->prepare($sql);
+            $stmt->execute($excludedRegions);
+
         } else {
-            $stmt = $this->master->prepare("
+
+            $sql = "
                 SELECT region_code, region_description
                 FROM region_masterfile
                 WHERE zone_code = ?
+                AND region_description NOT IN ($placeholders)
                 ORDER BY region_description
-            ");
-            $stmt->execute([$zone]);
+            ";
+
+            $params = array_merge([$zone], $excludedRegions);
+
+            $stmt = $this->master->prepare($sql);
+            $stmt->execute($params);
         }
 
         return ['ok' => true, 'data' => $stmt->fetchAll()];

@@ -302,8 +302,8 @@ class ReportController extends Controller
         $html .= '<br><br><br>';
 
         $w = [
-            'dt' => '9%', 'gc' => '6%', 'gd' => '10%', 'de' => '10%', 'rf' => '13%', 
-            'en' => '10%', 'cu' => '4%', 'db' => '7%', 'cr' => '7%', 'ty' => '8%', 
+            'dt' => '9%', 'gc' => '6%', 'gd' => '10%', 'de' => '10%', 'rf' => '10%', 
+            'en' => '10%', 'cu' => '7%', 'db' => '7%', 'cr' => '7%', 'ty' => '8%', 
             'br' => '5%', 'cc' => '6%', 'it' => '5%'
         ];
 
@@ -315,7 +315,7 @@ class ReportController extends Controller
         $html .= '<th style="width:'.$w['de'].'; background-color:#D50000; color:#FFFFFF; font-weight:bold;">Description</th>';
         $html .= '<th style="width:'.$w['rf'].'; background-color:#D50000; color:#FFFFFF; font-weight:bold;">Reference</th>';
         $html .= '<th style="width:'.$w['en'].'; background-color:#D50000; color:#FFFFFF; font-weight:bold;">Entry Number</th>';
-        $html .= '<th style="width:'.$w['cu'].'; background-color:#D50000; color:#FFFFFF; font-weight:bold;">Cur</th>';
+        $html .= '<th style="width:'.$w['cu'].'; background-color:#D50000; color:#FFFFFF; font-weight:bold;">Currency</th>';
         $html .= '<th style="width:'.$w['db'].'; background-color:#D50000; color:#FFFFFF; font-weight:bold;">Debit</th>';
         $html .= '<th style="width:'.$w['cr'].'; background-color:#D50000; color:#FFFFFF; font-weight:bold;">Credit</th>';
         $html .= '<th style="width:'.$w['ty'].'; background-color:#D50000; color:#FFFFFF; font-weight:bold;">Transaction Type</th>';
