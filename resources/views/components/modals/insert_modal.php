@@ -4,7 +4,7 @@
         <h2 class="font-bold text-lg mb-2">Inserting Data</h2>
 
         <p class="text-sm text-gray-600 mb-4">
-            Processing records into database...
+            Processing records...
         </p>
 
         <div class="w-full bg-gray-200 rounded-full h-2.5">

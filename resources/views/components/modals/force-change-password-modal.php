@@ -58,7 +58,7 @@
             <button type="submit" id="submitBtn"
                     class="w-full bg-red-600 text-white py-2 rounded-xl font-semibold shadow hover:bg-red-700 transition flex items-center justify-center gap-2">
 
-                <span id="btnText">Change Password</span>
+                <span id="btnText">Update Password</span>
                 <span id="btnLoader" class="hidden animate-spin border-2 border-white border-t-transparent rounded-full w-4 h-4"></span>
 
             </button>
