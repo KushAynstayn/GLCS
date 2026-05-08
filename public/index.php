@@ -114,6 +114,18 @@ if ($page === 'user-management') {
     $departments = $data['departments'];
 }
 
+
+if ($page === 'dashboard') {
+
+    require_once '../app/Controllers/DashboardController.php';
+
+    $controller = new DashboardController();
+
+    $data = $controller->index();
+
+    extract($data);
+}
+
 ob_start();
 include($fileToLoad);
 $content = ob_get_clean();
