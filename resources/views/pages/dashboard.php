@@ -4,105 +4,67 @@
         <p class="text-gray-500 text-sm">Monitor your system performance and data activities in real-time.</p>
     </div>
 
-    <div class="flex items-center justify-between gap-4">
-        <div class="flex-1 max-w-sm">
-            <input type="text" 
-                placeholder="Search by keywords..." 
-                class="w-full px-4 py-2 text-xs border border-gray-200 rounded-lg text-gray-600 focus:outline-none focus:ring-1 focus:ring-[#D50000] transition-all">
-        </div>
+    <div class="flex items-center justify-start gap-4">
+        <div class="relative">
+            <button type="button" onclick="toggleDropdown('date-dropdown')" class="flex items-center gap-2 px-3 py-2 text-xs border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 transition-all cursor-pointer">
+                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+                <span id="date-label">8 Feb - 15 Feb 2024</span>
+            </button>
 
-        <div class="flex items-center gap-3">
-            <div class="relative">
-                <button type="button" onclick="toggleDropdown('date-dropdown')" class="flex items-center gap-2 px-3 py-2 text-xs border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 transition-all cursor-pointer">
-                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                    </svg>
-                    <span id="date-label">8 Feb - 15 Feb 2024</span>
-                </button>
-
-                <div id="date-dropdown" class="hidden absolute right-0 mt-2 w-64 bg-white border border-gray-100 rounded-lg shadow-xl z-50 p-4 space-y-3">
-                    <div class="space-y-1">
-                        <label class="text-[10px] font-bold text-gray-400 uppercase">From</label>
-                        <input type="date" id="from-date" class="w-full px-2 py-1 text-xs border border-gray-200 rounded focus:ring-1 focus:ring-[#D50000] outline-none">
-                    </div>
-                    <div class="space-y-1">
-                        <label class="text-[10px] font-bold text-gray-400 uppercase">To</label>
-                        <input type="date" id="to-date" class="w-full px-2 py-1 text-xs border border-gray-200 rounded focus:ring-1 focus:ring-[#D50000] outline-none">
-                    </div>
-                    <button onclick="applyDate()" class="w-full py-2 bg-[#D50000] text-white text-[10px] font-bold uppercase rounded hover:bg-red-700 transition-colors">Apply</button>
+            <div id="date-dropdown" class="hidden absolute left-0 mt-2 w-64 bg-white border border-gray-100 rounded-lg shadow-xl z-50 p-4 space-y-3">
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-gray-400 uppercase">From</label>
+                    <input type="date" id="from-date" class="w-full px-2 py-1 text-xs border border-gray-200 rounded focus:ring-1 focus:ring-[#D50000] outline-none">
                 </div>
-            </div>
-
-            <div class="relative">
-                <button onclick="toggleDropdown('filter-dropdown')" 
-                    class="flex items-center gap-2 px-4 py-2 text-xs font-bold uppercase tracking-wider text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-gray-300 transition-all">
-                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
-                    </svg>
-                    Filter
-                </button>
-
-                <div id="filter-dropdown" class="hidden absolute right-0 mt-2 w-32 bg-white border border-gray-100 rounded-lg shadow-xl z-50 overflow-hidden">
-                    <a href="javascript:void(0)" onclick="updateTrend('day')" class="block px-4 py-2 text-xs text-gray-600 hover:bg-red-50 hover:text-[#D50000] transition-colors">Day</a>
-                    <a href="javascript:void(0)" onclick="updateTrend('week')" class="block px-4 py-2 text-xs text-gray-600 hover:bg-red-50 hover:text-[#D50000] transition-colors">Week</a>
-                    <a href="javascript:void(0)" onclick="updateTrend('month')" class="block px-4 py-2 text-xs text-gray-600 hover:bg-red-50 hover:text-[#D50000] transition-colors">Month</a>
-                    <a href="javascript:void(0)" onclick="updateTrend('year')" class="block px-4 py-2 text-xs text-gray-600 hover:bg-red-50 hover:text-[#D50000] transition-colors">Year</a>
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-gray-400 uppercase">To</label>
+                    <input type="date" id="to-date" class="w-full px-2 py-1 text-xs border border-gray-200 rounded focus:ring-1 focus:ring-[#D50000] outline-none">
                 </div>
+                <button onclick="applyDate()" class="w-full py-2 bg-[#D50000] text-white text-[10px] font-bold uppercase rounded hover:bg-red-700 transition-colors">Apply</button>
             </div>
         </div>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-6">
-        <div class="bg-white border border-gray-100 p-5 rounded-2xl shadow-sm flex items-center justify-between">
-            <div class="flex-1">
-                <div class="flex items-center mb-1">
+        <div class="bg-white border border-gray-100 p-5 rounded-2xl shadow-sm flex items-center justify-between gap-4">
+            <div class="flex-1 max-w-[calc(100%-180px)]">
+                <div class="flex items-center justify-between mb-3">
                     <div class="flex items-center gap-2 text-gray-600">
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2zm16 4H4v8h16V8z"></path></svg>
-                        <span class="text-xs font-semibold">GL Accounts</span>
+                        <span class="text-xs font-semibold uppercase tracking-[0.2em]">GL Accounts</span>
                     </div>
+                    <span class="inline-flex items-center rounded-full bg-red-50 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-red-700">Live</span>
                 </div>
-                <div class="mt-1">
-                    <div class="flex items-center gap-1 text-xs text-gray-500 mb-0.5">Overall GL codes accounts</div>
-                    <div class="text-2xl font-extrabold text-gray-900">1,248</div>
-                    <div id="trend-text" class="text-green-500 text-[11px] font-medium flex items-center gap-1">
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                        15.43% Than last month
-                    </div>
+                <div class="text-sm text-gray-500 mb-2">Overall GL codes accounts</div>
+                <div class="h-2 rounded-full bg-gray-100 overflow-hidden">
+                    <div class="h-full w-3/4 bg-red-500"></div>
                 </div>
             </div>
-            <div class="flex flex-col gap-2 ml-4">
-                <button onclick="openModal('gl-addgl')" class="flex items-center justify-center gap-2 px-4 py-2 text-xs font-bold uppercase tracking-wider text-red-700 bg-red-50 border border-red-100 rounded-lg hover:bg-red-600 hover:text-white transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1">
-                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                    Add
-                </button>
-                <button onclick="openModal('gl-importgl')" class="flex items-center justify-center gap-2 px-4 py-2 text-xs font-bold uppercase tracking-wider text-red-700 bg-red-50 border border-red-100 rounded-lg hover:bg-red-600 hover:text-white transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1">
-                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                    Import
-                </button>
+            <div class="text-right">
+                <div class="text-4xl font-extrabold text-gray-900">1,248</div>
+                <div class="text-xs uppercase tracking-[0.3em] text-gray-400 mt-1">Total codes</div>
             </div>
         </div>
 
-        <div class="bg-white border border-gray-100 p-5 rounded-2xl shadow-sm flex items-center justify-between">
-            <div class="flex-1">
-                <div class="flex items-center mb-1">
+        <div class="bg-white border border-gray-100 p-5 rounded-2xl shadow-sm flex items-center justify-between gap-4">
+            <div class="flex-1 max-w-[calc(100%-140px)]">
+                <div class="flex items-center justify-between mb-3">
                     <div class="flex items-center gap-2 text-gray-600">
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z"></path></svg>
-                        <span class="text-xs font-semibold">Partner Details</span>
+                        <span class="text-xs font-semibold uppercase tracking-[0.2em]">Total Users</span>
                     </div>
+                    <span class="inline-flex items-center rounded-full bg-red-50 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-red-700">Active</span>
                 </div>
-                <div class="mt-1">
-                    <div class="flex items-center gap-1 text-xs text-gray-500 mb-0.5">Overall partner accounts</div>
-                    <div class="text-2xl font-extrabold text-gray-900">85</div>
-                    <div id="partner-trend-text" class="text-green-500 text-[11px] font-medium flex items-center gap-1">
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                        5.2% Than last month
-                    </div>
+                <div class="text-sm text-gray-500 mb-2">Overall registered users</div>
+                <div class="h-2 rounded-full bg-gray-100 overflow-hidden">
+                    <div class="h-full w-1/2 bg-red-500"></div>
                 </div>
             </div>
-            <div class="ml-4">
-                <a href="index.php?page=reports-overall" class="flex items-center justify-center gap-2 px-4 py-2 text-xs font-bold uppercase tracking-wider text-red-700 bg-red-50 border border-red-100 rounded-lg hover:bg-red-600 hover:text-white transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1 w-full">
-                    <i class="fas fa-globe mr-2"></i> Reports
-                </a>
+            <div class="text-right">
+                <div class="text-4xl font-extrabold text-gray-900">85</div>
+                <div class="text-xs uppercase tracking-[0.3em] text-gray-400 mt-1">User accounts</div>
             </div>
         </div>
 
@@ -112,7 +74,6 @@
                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path></svg>
                     <span class="text-xs font-semibold">User Access</span>
                 </div>
-                <a href="index.php?page=user-management" class="text-[10px] font-bold uppercase tracking-wider text-red-700 hover:text-red-900 transition-colors">See More</a>
             </div>
             <div class="flex-1 overflow-y-auto pr-2 space-y-3 custom-scrollbar">
                 <div class="text-[11px] text-gray-700">
@@ -141,7 +102,7 @@
         </div>
 
         <div class="bg-white border border-gray-100 p-5 rounded-2xl shadow-sm lg:col-span-2 relative">
-            <h3 class="text-xs font-bold text-gray-500 uppercase mb-4">Activity Overview</h3>
+            <h3 class="text-xs font-bold text-gray-500 uppercase mb-4">Recent GLE Imports</h3>
             
             <div id="chart-tooltip" class="fixed hidden bg-gray-800 text-white text-[10px] px-2 py-1 rounded shadow-lg z-50 pointer-events-none"></div>
 
@@ -151,11 +112,6 @@
                 </div>
                 <div id="bars-wrapper" class="flex items-end gap-4 flex-1 h-full ml-4 min-w-[400px]">
                 </div>
-            </div>
-            
-            <div class="flex gap-4 mt-4 text-[10px] text-gray-500">
-                <div class="flex items-center gap-1"><span class="w-3 h-3 bg-red-600 rounded-sm"></span> GL Accounts</div>
-                <div class="flex items-center gap-1"><span class="w-3 h-3 bg-red-300 rounded-sm"></span> Partners</div>
             </div>
         </div>
     </div>
@@ -189,7 +145,7 @@
 
     function showTooltip(e, label, gl, pr) {
         const tooltip = document.getElementById('chart-tooltip');
-        const content = `<strong>${label}</strong><br/>GL: ${gl}%<br/>Part: ${pr}%`;
+        const content = `<strong>${label}</strong><br/>Imports: ${gl}%`;
         
         if (tooltip.innerHTML !== content || tooltip.classList.contains('hidden')) {
             tooltip.innerHTML = content;
@@ -216,12 +172,6 @@
     }
 
     function updateTrend(period) {
-        const trendText = document.getElementById('trend-text');
-        trendText.innerHTML = `<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> 15.43% Than last ${period}`;
-
-        const partnerTrendText = document.getElementById('partner-trend-text');
-        partnerTrendText.innerHTML = `<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> 5.2% Than last ${period}`;
-
         const wrapper = document.getElementById('bars-wrapper');
         const data = chartData[period] || chartData['month'];
         
@@ -229,16 +179,12 @@
         
         data.forEach(item => {
             const barGroup = document.createElement('div');
-            barGroup.className = 'flex flex-col items-center gap-2 flex-1 min-w-[20px]';
+            barGroup.className = 'flex flex-col items-center gap-2 flex-1 min-w-[26px]';
             barGroup.innerHTML = `
-                <div class="flex gap-1 items-end h-20 w-full justify-center">
-                    <div class="w-3 md:w-5 bg-red-600 rounded-t-sm transition-all duration-500 cursor-pointer" 
+                <div class="flex items-end h-20 w-full justify-center">
+                    <div class="w-8 bg-red-600 rounded-t-sm transition-all duration-500 cursor-pointer" 
                          style="height: ${item.gl}%" 
-                         onmouseover="showTooltip(event, '${item.label}', ${item.gl}, ${item.pr})" 
-                         onmouseout="hideTooltip()"></div>
-                    <div class="w-3 md:w-5 bg-red-300 rounded-t-sm transition-all duration-500 cursor-pointer" 
-                         style="height: ${item.pr}%" 
-                         onmouseover="showTooltip(event, '${item.label}', ${item.gl}, ${item.pr})" 
+                         onmouseover="showTooltip(event, '${item.label}', ${item.gl})" 
                          onmouseout="hideTooltip()"></div>
                 </div>
                 <span class="text-[9px] font-bold text-gray-500 uppercase truncate w-full text-center">${item.label}</span>
