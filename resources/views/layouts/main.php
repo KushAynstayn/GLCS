@@ -47,7 +47,7 @@
     <?php if ($page === 'landing'): ?>
 
         <!-- LANDING (NO SIDEBAR) -->
-        <main class="flex-1 flex flex-col">
+        <main class="flex-1 flex flex-col page-fade-in">
             <?php echo $content ?? ''; ?>
         </main>
 
@@ -63,7 +63,7 @@
                 ?>
             <?php endif; ?>
 
-            <main class="flex-1 p-6 bg-gray-100 overflow-y-auto">
+            <main class="flex-1 p-6 bg-gray-100 overflow-y-auto page-fade-in">
                 <?php echo $content ?? ''; ?>
             </main>
 
@@ -90,6 +90,32 @@
             }, 100);
         }
     }, 100);
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const mainContent = document.querySelector('.page-fade-in');
+        const links = document.querySelectorAll('a:not([target="_blank"]):not([href^="#"])');
+
+        links.forEach(link => {
+            link.addEventListener('click', function(e) {
+                // Only trigger if it's an internal link
+                if (this.hostname === window.location.hostname) {
+                    e.preventDefault();
+                    const target = this.href;
+
+                    // Add fade-out effect
+                    mainContent.style.transition = 'opacity 0.2s ease-in-out';
+                    mainContent.style.opacity = '0';
+
+                    // Navigate after animation
+                    setTimeout(() => {
+                        window.location.href = target;
+                    }, 200);
+                }
+            });
+        });
+    });
+    
     </script>
 
     <?php include __DIR__ . '/../components/modals/force-change-password-modal.php'; ?>
